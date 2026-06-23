@@ -1,0 +1,1823 @@
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:'Noto Sans Thai',system-ui,sans-serif;background:#e6e3da;color:#22251f;
+    --bg:#f5f3ee;--card:#ffffff;--border:#ebe7de;--divider:#f1ede4;--fill:#f3f1ea;--fill2:#eceae2;--track:#eef0ec;--text:#22251f;--muted:#9a9c92;--muted2:#75776e}
+  .nl-phone,.nl-themed{transition:color .3s ease}
+  .nl-phone{color:var(--text)}
+  [data-theme="light"]{--bg:#f5f3ee;--card:#ffffff;--border:#ebe7de;--divider:#f1ede4;--fill:#f3f1ea;--fill2:#eceae2;--track:#eef0ec;--text:#22251f;--muted:#9a9c92;--muted2:#75776e}
+  [data-theme="mint"]{--bg:#e9f3ed;--card:#ffffff;--border:#d6e6dd;--divider:#e1ede7;--fill:#e3efe8;--fill2:#dbe9e1;--track:#deece4;--text:#1b2a22;--muted:#6e8278;--muted2:#4f6258}
+  [data-theme="sky"]{--bg:#e9f0f8;--card:#ffffff;--border:#d6e1ef;--divider:#e1eaf4;--fill:#e2ebf6;--fill2:#dae6f3;--track:#dde7f4;--text:#1a2433;--muted:#6f7d93;--muted2:#4f5c73}
+  [data-theme="sand"]{--bg:#f5efe3;--card:#fffdf8;--border:#e8dfcd;--divider:#efe7d8;--fill:#eee6d4;--fill2:#e8decb;--track:#ebe3d1;--text:#2b2518;--muted:#968a71;--muted2:#746950}
+  [data-theme="dark"]{--bg:#14161a;--card:#20242b;--border:#333842;--divider:#2c313a;--fill:#2a2f38;--fill2:#262b34;--track:#333842;--text:#f3f4ef;--muted:#9ea29a;--muted2:#c3c7bd}
+  [data-theme="midnight"]{--bg:#10172a;--card:#1a2340;--border:#2c3858;--divider:#232e4b;--fill:#202b49;--fill2:#1c2643;--track:#2c3858;--text:#eef2fb;--muted:#94a1c0;--muted2:#bfc9e3}
+  .nl-scroll::-webkit-scrollbar{width:0;height:0}
+  .nl-scroll{scrollbar-width:none}
+  @keyframes nlSheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes nlFade{from{opacity:0}to{opacity:1}}
+  @keyframes nlSwap{from{transform:translateY(9px)}to{transform:translateY(0)}}
+  @keyframes nlToast{0%{transform:translate(-50%,20px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
+  @keyframes nlPop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+  @keyframes nlBlink{0%,100%{opacity:.3}50%{opacity:1}}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+</style>
+</helmet>
+<div style="min-height:100vh;width:100%;background:#e6e3da;display:flex;flex-direction:column;align-items:stretch;padding:0 0 64px">
+<!-- TOP CONTROL BAR -->
+<div style="width:100%;position:sticky;top:0;z-index:50;background:rgba(244,242,236,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #dcd8cf;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:11px">
+<div style="width:30px;height:30px;border-radius:9px;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px">฿</div>
+<div style="line-height:1.1">
+<div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">เงินทอน</div>
+<div style="font-size:11px;color:var(--muted);font-weight:400">รู้ว่าเงินไปไหน เหลือใช้จริงเท่าไร</div>
+</div>
+</div>
+<div style="display:flex;background:#e9e6dd;border:1px solid #dcd8cf;border-radius:11px;padding:3px;gap:2px">
+<button onClick="{{ setMobile }}" style="{{ tabMobileStyle }}">Mobile App</button>
+<button onClick="{{ setWeb }}" style="{{ tabWebStyle }}">Web Dashboard</button>
+<button onClick="{{ setComponents }}" style="{{ tabCompStyle }}">Design System</button>
+</div>
+</div>
+<!-- MOBILE STAGE -->
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;max-width:1040px;margin:0 auto;padding:34px 24px 0;display:flex;flex-direction:column;align-items:center;gap:22px">
+<!-- screen chips -->
+<div class="nl-scroll" style="max-width:100%;overflow-x:auto;display:flex;gap:8px;padding:2px">
+<sc-for list="{{ screenTabs }}" as="t" hint-placeholder-count="8">
+<button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+</sc-for>
+</div>
+<!-- hero variant switch (only on home) -->
+<sc-if value="{{ screenHome }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted2)">
+<span>การ์ด “เงินที่ใช้ได้จริง”:</span>
+<div style="display:flex;background:var(--card);border:1px solid #ddd9d0;border-radius:9px;padding:3px;gap:2px">
+<button onClick="{{ setHero1 }}" style="{{ hero1Style }}">แบบ A</button>
+<button onClick="{{ setHero2 }}" style="{{ hero2Style }}">แบบ B</button>
+<button onClick="{{ setHero3 }}" style="{{ hero3Style }}">แบบ C</button>
+</div>
+</div>
+</sc-if>
+<!-- PHONE -->
+<div id="nl-device" style="position:relative;width:392px;height:812px;background:#1c1e1a;border-radius:54px;padding:11px;box-shadow:0 30px 60px -20px rgba(40,42,33,0.45),0 8px 20px rgba(40,42,33,0.12)">
+<div class="nl-phone" data-theme="{{ themeAttr }}" style="position:relative;width:100%;height:100%;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column">
+<!-- status bar -->
+<div style="flex:none;height:50px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 8px;font-size:14px;font-weight:600;color:var(--text);z-index:5">
+<span>9:41</span>
+<div style="position:absolute;left:50%;top:9px;transform:translateX(-50%);width:108px;height:30px;background:#1c1e1a;border-radius:16px">
+</div>
+<span style="display:flex;gap:6px;align-items:center">
+<span style="display:flex;gap:2px;align-items:flex-end;height:11px">
+<i style="width:3px;height:5px;background:var(--text);border-radius:1px">
+</i>
+<i style="width:3px;height:7px;background:var(--text);border-radius:1px">
+</i>
+<i style="width:3px;height:9px;background:var(--text);border-radius:1px">
+</i>
+<i style="width:3px;height:11px;background:var(--text);border-radius:1px">
+</i>
+</span>
+<span style="display:inline-block;width:15px;height:11px;border:1.5px solid var(--text);border-radius:3px;position:relative">
+<i style="position:absolute;inset:1.5px;width:8px;background:var(--text);border-radius:1px">
+</i>
+</span>
+</span>
+</div>
+<!-- SCROLL AREA -->
+<div class="nl-scroll" style="flex:1;overflow-y:auto;position:relative">
+<!-- ============ ONBOARDING ============ -->
+<sc-if value="{{ screenOnboarding }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100%;display:flex;flex-direction:column;padding:8px 26px 30px">
+<!-- progress -->
+<div style="display:flex;gap:6px;margin:6px 0 30px">
+<sc-for list="{{ onbDots }}" as="d" hint-placeholder-count="4">
+<div style="{{ d.style }}">
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ onbIsStep1 }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 1 จาก 4</div>
+<h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">เงินเดือนหรือรายได้หลัก<br>เข้าวันไหน?</h1>
+<p style="font-size:14px;color:var(--muted);margin:0 0 26px">เลือกวันที่ใกล้เคียงก็ได้ ปรับทีหลังได้เสมอ</p>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+<sc-for list="{{ payDays }}" as="d" hint-placeholder-count="6">
+<button onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</button>
+</sc-for>
+</div>
+<button onClick="{{ payEomClick }}" style="{{ payEomStyle }}">
+<span style="font-size:16px">📅</span>วันสิ้นเดือน (วันสุดท้ายของเดือน)</button>
+</div>
+</sc-if>
+<sc-if value="{{ onbIsStep2 }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;min-height:100%">
+<div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 2 จาก 4</div>
+<h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">รายได้ต่อเดือน<br>ประมาณเท่าไร?</h1>
+<p style="font-size:14px;color:var(--muted);margin:0 0 18px">ใส่โดยประมาณก็ได้ แก้ทีหลังได้เสมอ</p>
+<div style="display:flex;align-items:baseline;justify-content:center;gap:8px;padding:18px 0;border-bottom:2px solid #2f7d5b">
+<span style="font-size:34px;color:#bdbfb5;font-weight:600">฿</span>
+<span style="font-size:50px;font-weight:700;letter-spacing:-0.02em">{{ onbIncomeDisplay }}</span>
+</div>
+<div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center">
+<sc-for list="{{ incomePresets }}" as="p" hint-placeholder-count="3">
+<button onClick="{{ p.onClick }}" style="{{ p.style }}">{{ p.label }}</button>
+</sc-for>
+</div>
+<div style="flex:1;min-height:14px">
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+<sc-for list="{{ onbKeypad }}" as="k" hint-placeholder-count="12">
+<button onClick="{{ k.onClick }}" style="height:48px;border-radius:13px;background:var(--card);border:1px solid #e6e2d9;font-size:21px;font-weight:600;color:var(--text)">{{ k.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ onbIsStep3 }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 3 จาก 4</div>
+<h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">มีค่าใช้จ่ายอะไร<br>ที่ต้องจ่ายทุกเดือนไหม?</h1>
+<p style="font-size:14px;color:var(--muted);margin:0 0 22px">เลือกได้หลายอย่าง ไม่มีก็ข้ามได้</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ recurringOptions }}" as="o" hint-placeholder-count="7">
+<button onClick="{{ o.onClick }}" style="{{ o.style }}">
+<span style="font-size:14px;font-weight:500">{{ o.label }}</span>
+<span style="{{ o.checkStyle }}">✓</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{ otherOn }}" hint-placeholder-val="{{ true }}">
+<div style="margin-top:14px;background:var(--card);border:1px solid #e6e2d9;border-radius:14px;padding:14px">
+<div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">พิมพ์ชื่อค่าใช้จ่ายอื่น ๆ แล้วกดเพิ่มได้เรื่อย ๆ</div>
+<div style="display:flex;gap:8px">
+<input value="{{ customDraft }}" onInput="{{ onCustomInput }}" placeholder="เช่น ค่าฟิตเนส, ประกัน" style="flex:1;height:44px;border:1px solid #e0ddd4;border-radius:11px;padding:0 13px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);outline:none" />
+<button onClick="{{ addCustom }}" style="flex:none;height:44px;padding:0 18px;border-radius:11px;background:#2f7d5b;color:#fff;font-size:14px;font-weight:600;font-family:inherit">เพิ่ม</button>
+</div>
+<sc-if value="{{ hasCustom }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+<sc-for list="{{ customChips }}" as="c" hint-placeholder-count="2">
+<button onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:20px;background:#e8f1ec;border:1px solid #cfe3d8;color:#2f7d5b;font-size:13px;font-weight:500;font-family:inherit">{{ c.label }}<span style="font-size:14px;opacity:0.6">✕</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ onbIsStep4 }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 4 จาก 4</div>
+<h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">ตอนนี้อยากให้เงิน<br>ช่วยเรื่องไหนมากที่สุด?</h1>
+<p style="font-size:14px;color:var(--muted);margin:0 0 22px">เลือก 1 ข้อ เปลี่ยนได้ทุกเมื่อ</p>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ goalOptions }}" as="o" hint-placeholder-count="5">
+<button onClick="{{ o.onClick }}" style="{{ o.style }}">
+<span style="{{ o.dotStyle }}">
+</span>
+<span style="font-size:15px;font-weight:500">{{ o.label }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ onbIsDone }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-bottom:40px">
+<div style="width:88px;height:88px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;margin-bottom:26px;animation:nlPop .4s ease">
+<div style="width:54px;height:54px;border-radius:50%;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px">✓</div>
+</div>
+<h1 style="font-size:26px;font-weight:700;line-height:1.35;margin:0 0 12px">พร้อมแล้ว</h1>
+<p style="font-size:15px;color:var(--muted2);line-height:1.6;margin:0;max-width:280px">เราจะช่วยดูว่าเงินของคุณไปไหน<br>และเหลือใช้จริงเท่าไรในแต่ละเดือน</p>
+</div>
+</sc-if>
+<div style="flex:1">
+</div>
+<div style="display:flex;gap:12px;margin-top:30px">
+<sc-if value="{{ onbCanBack }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ onbBack }}" style="flex:none;width:54px;height:54px;border-radius:16px;background:var(--card);border:1px solid #e6e2d9;font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+</sc-if>
+<button onClick="{{ onbNext }}" style="flex:1;height:54px;border-radius:16px;background:#2f7d5b;color:#fff;font-size:16px;font-weight:600;box-shadow:0 6px 16px -4px rgba(47,125,91,0.5)">{{ onbCtaLabel }}</button>
+</div>
+</div>
+</sc-if>
+<!-- ============ HOME ============ -->
+<sc-if value="{{ screenHome }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<!-- header -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 20px">
+<div>
+<div style="font-size:21px;font-weight:700;letter-spacing:-0.01em">สวัสดีครับ, บอล</div>
+<div style="font-size:13px;color:var(--muted);margin-top:2px">ภาพรวมเดือนมิถุนายน</div>
+</div>
+<div style="width:42px;height:42px;border-radius:50%;background:#e8f1ec;border:1px solid #d6e6dd;display:flex;align-items:center;justify-content:center;color:#2f7d5b;font-weight:600;font-size:15px">บ</div>
+</div>
+<!-- HERO VARIANT A -->
+<sc-if value="{{ heroA }}" hint-placeholder-val="{{ true }}">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 1px 2px rgba(40,42,33,0.04),0 8px 24px -12px rgba(40,42,33,0.1)">
+<div style="display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;font-weight:500">
+<span style="width:7px;height:7px;border-radius:50%;background:#2f7d5b;display:inline-block">
+</span>เงินที่ใช้ได้จริง</div>
+<div style="font-size:46px;font-weight:800;letter-spacing:-0.03em;margin:8px 0 4px;color:var(--text)">฿12,800</div>
+<div style="font-size:13px;color:var(--muted)">หลังหักบิลและค่าใช้จ่ายที่รอแล้ว</div>
+<div style="height:8px;border-radius:6px;background:var(--track);margin:18px 0 0;overflow:hidden;display:flex">
+<div style="width:74%;background:#cde0d5">
+</div>
+<div style="width:26%;background:#2f7d5b">
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11.5px;color:var(--muted)">
+<span>กันไว้แล้ว ฿37,200</span>
+<span style="color:#2f7d5b;font-weight:600">ใช้ได้ ฿12,800</span>
+</div>
+<button onClick="{{ goDetail }}" style="margin-top:16px;width:100%;height:42px;border-radius:12px;background:var(--fill);color:#3a4d42;font-size:13.5px;font-weight:600">ดูรายละเอียด</button>
+</div>
+</sc-if>
+<!-- HERO VARIANT B -->
+<sc-if value="{{ heroB }}" hint-placeholder-val="{{ true }}">
+<div style="background:#2f7d5b;border-radius:20px;padding:24px;box-shadow:0 10px 30px -10px rgba(47,125,91,0.5);color:#fff;position:relative;overflow:hidden">
+<div style="position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.06)">
+</div>
+<div style="font-size:13px;font-weight:500;opacity:0.85">เงินที่ใช้ได้จริง</div>
+<div style="font-size:48px;font-weight:800;letter-spacing:-0.03em;margin:6px 0 4px">฿12,800</div>
+<div style="font-size:13px;opacity:0.8">หลังหักบิลและค่าใช้จ่ายที่รอแล้ว</div>
+<div style="display:flex;gap:10px;margin-top:20px">
+<div style="flex:1;background:rgba(255,255,255,0.12);border-radius:13px;padding:12px 14px">
+<div style="font-size:11px;opacity:0.8">เงินทั้งหมด</div>
+<div style="font-size:18px;font-weight:700;margin-top:2px">฿50,000</div>
+</div>
+<div style="flex:1;background:rgba(255,255,255,0.12);border-radius:13px;padding:12px 14px">
+<div style="font-size:11px;opacity:0.8">ต้องกันไว้</div>
+<div style="font-size:18px;font-weight:700;margin-top:2px">฿37,200</div>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- HERO VARIANT C -->
+<sc-if value="{{ heroC }}" hint-placeholder-val="{{ true }}">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 1px 2px rgba(40,42,33,0.04),0 8px 24px -12px rgba(40,42,33,0.1)">
+<div style="font-size:13px;color:var(--muted);font-weight:500;margin-bottom:14px">เงินที่ใช้ได้จริงเดือนนี้</div>
+<div style="display:flex;align-items:flex-end;gap:18px">
+<div style="position:relative;width:96px;height:96px;flex:none">
+<div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(#2f7d5b 0% 26%,var(--track) 26% 100%)">
+</div>
+<div style="position:absolute;inset:11px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center">
+<span style="font-size:20px;font-weight:800;color:#2f7d5b">26%</span>
+<span style="font-size:9px;color:var(--muted)">ของเงินทั้งหมด</span>
+</div>
+</div>
+<div>
+<div style="font-size:40px;font-weight:800;letter-spacing:-0.03em;line-height:1">฿12,800</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:6px">จากเงินทั้งหมด ฿50,000<br>กันไว้สำหรับบิล &amp; เป้าหมาย ฿37,200</div>
+</div>
+</div>
+<button onClick="{{ goDetail }}" style="margin-top:18px;width:100%;height:42px;border-radius:12px;background:var(--fill);color:#3a4d42;font-size:13.5px;font-weight:600">ดูรายละเอียด</button>
+</div>
+</sc-if>
+<!-- secondary cards -->
+<div style="display:flex;gap:12px;margin-top:14px">
+<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px">
+<div style="font-size:12px;color:var(--muted)">เงินในบัญชีทั้งหมด</div>
+<div style="font-size:21px;font-weight:700;margin-top:5px">฿50,000</div>
+</div>
+<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px">
+<div style="font-size:12px;color:var(--muted)">ต้องกันไว้</div>
+<div style="font-size:21px;font-weight:700;margin-top:5px;color:#c98a3c">฿37,200</div>
+</div>
+</div>
+<!-- this month -->
+<div style="margin:24px 0 12px;font-size:15px;font-weight:700">เดือนนี้เป็นอย่างไร</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px">
+<div style="display:flex;justify-content:space-between;gap:14px">
+<div style="flex:1">
+<div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)">
+<span style="width:8px;height:8px;border-radius:3px;background:#3f9d6b">
+</span>เงินเข้า</div>
+<div style="font-size:20px;font-weight:700;color:#3f9d6b;margin-top:4px">฿70,000</div>
+</div>
+<div style="width:1px;background:#eee9e0">
+</div>
+<div style="flex:1">
+<div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)">
+<span style="width:8px;height:8px;border-radius:3px;background:#d9776a">
+</span>เงินออก</div>
+<div style="font-size:20px;font-weight:700;color:#d9776a;margin-top:4px">฿41,800</div>
+</div>
+</div>
+<div style="margin-top:14px;height:10px;border-radius:6px;overflow:hidden;display:flex;gap:3px">
+<div style="flex:70000;background:#dcefe2;border-radius:6px">
+</div>
+<div style="flex:41800;background:#f6dcd6;border-radius:6px">
+</div>
+</div>
+<div style="margin-top:12px;font-size:12.5px;color:#3f9d6b;background:#eef7f1;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:7px">↓ ใช้จ่ายน้อยกว่าเดือนก่อน 8%</div>
+</div>
+<!-- upcoming -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px">
+<div style="font-size:15px;font-weight:700">ต้องจ่ายเร็ว ๆ นี้</div>
+<button onClick="{{ goBills }}" style="font-size:13px;color:#2f7d5b;font-weight:600">ดูทั้งหมด</button>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ upcomingBills }}" as="b" hint-placeholder-count="3">
+<div style="{{ b.rowStyle }}">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ b.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ b.name }}</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">{{ b.due }}</div>
+</div>
+<div style="font-size:15px;font-weight:700">{{ b.amount }}</div>
+</div>
+</sc-for>
+</div>
+<!-- watch budgets -->
+<div style="margin:24px 0 12px;font-size:15px;font-weight:700">งบที่ต้องระวัง</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ watchBudgets }}" as="g" hint-placeholder-count="2">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14.5px;font-weight:600">{{ g.name }}</span>
+<span style="{{ g.tagStyle }}">{{ g.tag }}</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);margin:12px 0 8px;overflow:hidden">
+<div style="{{ g.barStyle }}">
+</div>
+</div>
+<div style="font-size:12.5px;color:var(--muted)">{{ g.detail }}</div>
+</div>
+</sc-for>
+</div>
+<!-- recent -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px">
+<div style="font-size:15px;font-weight:700">รายการล่าสุด</div>
+<button onClick="{{ goTxns }}" style="font-size:13px;color:#2f7d5b;font-weight:600">ดูทั้งหมด</button>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ recentTxns }}" as="t" hint-placeholder-count="3">
+<div style="{{ t.rowStyle }}">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ t.name }}</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">{{ t.meta }}</div>
+</div>
+<div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<!-- ============ DETAIL (เงินที่ใช้ได้จริง) ============ -->
+<sc-if value="{{ screenDetail }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px">
+<div style="display:flex;align-items:center;gap:12px;margin:6px 0 18px">
+<button onClick="{{ goHome }}" style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+<div style="font-size:19px;font-weight:700;white-space:nowrap">เงินที่ใช้ได้จริง</div>
+</div>
+<div style="background:#2f7d5b;border-radius:20px;padding:24px;color:#fff;text-align:center;box-shadow:0 10px 28px -12px rgba(47,125,91,0.5)">
+<div style="font-size:13px;opacity:0.85">ตอนนี้คุณใช้ได้จริง</div>
+<div style="font-size:46px;font-weight:800;letter-spacing:-0.03em;margin:6px 0 2px">฿12,800</div>
+<div style="font-size:12.5px;opacity:0.8">คิดจากเงินทั้งหมด หักสิ่งที่กันไว้แล้ว</div>
+</div>
+<div style="margin:22px 0 12px;font-size:14px;font-weight:700">เงินของคุณไปไหนบ้าง</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid var(--divider)">
+<div style="width:40px;height:40px;border-radius:12px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:18px">💰</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">เงินในบัญชีทั้งหมด</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">รวมทุกบัญชีและเงินสด</div>
+</div>
+<div style="font-size:16px;font-weight:800">฿50,000</div>
+</div>
+<sc-for list="{{ detailItems }}" as="d" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:13px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<div style="width:40px;height:40px;border-radius:12px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:17px">{{ d.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14px;font-weight:600">{{ d.label }}</div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ d.sub }}</div>
+</div>
+<div style="font-size:15px;font-weight:700;color:#c98a3c">{{ d.amount }}</div>
+</div>
+</sc-for>
+<div style="display:flex;align-items:center;gap:13px;padding:16px;background:#eef7f1">
+<div style="width:40px;height:40px;border-radius:12px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">✓</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:700;color:#2f7d5b">เหลือใช้จริง</div>
+<div style="font-size:11.5px;color:#5a8a72;margin-top:1px">ใช้ได้สบายใจถึงสิ้นเดือน</div>
+</div>
+<div style="font-size:18px;font-weight:800;color:#2f7d5b">฿12,800</div>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-top:12px;display:flex;align-items:center;gap:14px">
+<div style="width:46px;height:46px;border-radius:14px;background:#e8f1ec;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;color:#2f7d5b">
+<span style="font-size:16px;font-weight:800;line-height:1">20</span>
+<span style="font-size:9px">วัน</span>
+</div>
+<div style="flex:1">
+<div style="font-size:13px;color:var(--muted)">เฉลี่ยใช้ได้วันละ</div>
+<div style="font-size:18px;font-weight:800">฿640 <span style="font-size:12px;font-weight:500;color:var(--muted)">ถึงวันเงินเดือนออก</span>
+</div>
+</div>
+</div>
+<button onClick="{{ openSheet }}" style="margin-top:12px;width:100%;background:var(--card);border:1px dashed #cfe3d8;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;text-align:left;font-family:inherit">
+<span style="width:34px;height:34px;border-radius:10px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none">✦</span>
+<span style="flex:1">
+<span style="display:block;font-size:14px;font-weight:600;color:var(--text)">ดูสรุปสั้น ๆ จากผู้ช่วย</span>
+<span style="display:block;font-size:12px;color:var(--muted);margin-top:1px">เดือนนี้ใช้เงินไปกับอะไรบ้าง</span>
+</span>
+<span style="font-size:18px;color:#c4c6bc">›</span>
+</button>
+</div>
+</sc-if>
+<!-- ============ CREATE GOAL ============ -->
+<sc-if value="{{ screenCreateGoal }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100%;display:flex;flex-direction:column;padding:6px 20px 24px">
+<div style="display:flex;align-items:center;gap:12px;margin:6px 0 20px">
+<button onClick="{{ goGoals }}" style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+<div style="font-size:19px;font-weight:700;white-space:nowrap">สร้างเป้าหมาย</div>
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:10px">เลือกไอคอน</div>
+<div class="nl-scroll" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px">
+<sc-for list="{{ goalIconChoices }}" as="i" hint-placeholder-count="10">
+<button onClick="{{ i.onClick }}" style="{{ i.style }}">{{ i.icon }}</button>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">ชื่อเป้าหมาย</div>
+<input value="{{ goalName }}" onInput="{{ onGoalName }}" placeholder="เช่น เงินฉุกเฉิน, ดาวน์รถ" style="height:50px;border:1px solid var(--border);border-radius:13px;padding:0 15px;font-size:15px;font-family:inherit;background:var(--card);color:var(--text);outline:none;margin-bottom:18px" />
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">จำนวนเงินเป้าหมาย</div>
+<div style="display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:0 15px">
+<span style="font-size:22px;color:#bdbfb5;font-weight:600">฿</span>
+<input value="{{ goalTargetDisplay }}" onInput="{{ onGoalTarget }}" inputmode="numeric" placeholder="0" style="flex:1;min-width:0;height:54px;border:none;background:transparent;font-size:26px;font-weight:700;font-family:inherit;color:var(--text);outline:none;text-align:right;letter-spacing:-0.01em" />
+</div>
+<sc-if value="{{ goalShowTargetPretty }}" hint-placeholder-val="{{ true }}">
+<div style="font-size:12.5px;color:var(--muted);text-align:right;margin:6px 2px 0">{{ goalTargetPretty }}</div>
+</sc-if>
+<div style="height:18px">
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">ตั้งใจเก็บเดือนละ</div>
+<div style="display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:0 15px">
+<span style="font-size:18px;color:#bdbfb5;font-weight:600">฿</span>
+<input value="{{ goalMonthlyDisplay }}" onInput="{{ onGoalMonthly }}" inputmode="numeric" placeholder="5000" style="flex:1;min-width:0;height:50px;border:none;background:transparent;font-size:20px;font-weight:700;font-family:inherit;color:var(--text);outline:none;text-align:right" />
+</div>
+<sc-if value="{{ goalShowMonthlyPretty }}" hint-placeholder-val="{{ true }}">
+<div style="font-size:12.5px;color:var(--muted);text-align:right;margin:6px 2px 0">{{ goalMonthlyPretty }}</div>
+</sc-if>
+<sc-if value="{{ goalHasEta }}" hint-placeholder-val="{{ true }}">
+<div style="margin-top:12px;background:#eef7f1;border:1px solid #d6e9dd;border-radius:13px;padding:13px 15px;display:flex;align-items:center;gap:10px">
+<span style="width:26px;height:26px;border-radius:8px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none">📅</span>
+<span style="font-size:13.5px;color:#3a4d42">เก็บแบบนี้จะถึงเป้าในประมาณ <b>{{ goalEtaMonths }} เดือน</b>
+</span>
+</div>
+</sc-if>
+<div style="flex:1;min-height:24px">
+</div>
+<button onClick="{{ saveGoal }}" style="{{ goalSaveStyle }}">สร้างเป้าหมาย</button>
+</div>
+</sc-if>
+<!-- ============ CREATE BILL ============ -->
+<sc-if value="{{ screenCreateBill }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100%;display:flex;flex-direction:column;padding:6px 20px 24px">
+<div style="display:flex;align-items:center;gap:12px;margin:6px 0 20px">
+<button onClick="{{ goBillsBack }}" style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+<div style="font-size:19px;font-weight:700;white-space:nowrap">{{ billFormTitle }}</div>
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:10px">เลือกไอคอน</div>
+<div class="nl-scroll" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px">
+<sc-for list="{{ billIconChoices }}" as="i" hint-placeholder-count="10">
+<button onClick="{{ i.onClick }}" style="{{ i.style }}">{{ i.icon }}</button>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">ชื่อบิล</div>
+<input value="{{ billName }}" onInput="{{ onBillName }}" placeholder="เช่น ค่าน้ำ, ประกันรถ" style="height:50px;border:1px solid var(--border);border-radius:13px;padding:0 15px;font-size:15px;font-family:inherit;background:var(--card);color:var(--text);outline:none;margin-bottom:18px" />
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">จำนวนเงิน</div>
+<div style="display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:0 15px">
+<span style="font-size:22px;color:#bdbfb5;font-weight:600">฿</span>
+<input value="{{ billAmountDisplay }}" onInput="{{ onBillAmount }}" inputmode="numeric" placeholder="0" style="flex:1;min-width:0;height:54px;border:none;background:transparent;font-size:26px;font-weight:700;font-family:inherit;color:var(--text);outline:none;text-align:right;letter-spacing:-0.01em" />
+</div>
+<sc-if value="{{ billShowPretty }}" hint-placeholder-val="{{ true }}">
+<div style="font-size:12.5px;color:var(--muted);text-align:right;margin:6px 2px 0">{{ billAmountPretty }}</div>
+</sc-if>
+<div style="height:18px">
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">รอบการจ่าย</div>
+<div style="display:flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px;margin-bottom:18px">
+<button onClick="{{ billCycleM }}" style="{{ billCycleMStyle }}">ทุกเดือน</button>
+<button onClick="{{ billCycleY }}" style="{{ billCycleYStyle }}">ทุกปี</button>
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">วันครบกำหนด</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px">
+<sc-for list="{{ billDayChoices }}" as="d" hint-placeholder-count="6">
+<button onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</button>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:8px">เตือนล่วงหน้า</div>
+<div style="display:flex;gap:8px">
+<sc-for list="{{ billRemindChoices }}" as="r" hint-placeholder-count="3">
+<button onClick="{{ r.onClick }}" style="{{ r.style }}">{{ r.label }}</button>
+</sc-for>
+</div>
+<div style="flex:1;min-height:24px">
+</div>
+<button onClick="{{ saveBill }}" style="{{ billSaveStyle }}">{{ billSaveLabel }}</button>
+</div>
+</sc-if>
+<!-- ============ ADD TRANSACTION ============ -->
+<sc-if value="{{ screenAdd }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100%;display:flex;flex-direction:column">
+<sc-if value="{{ addSuccess }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 30px">
+<div style="width:84px;height:84px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:nlPop .4s ease">
+<div style="width:50px;height:50px;border-radius:50%;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px">✓</div>
+</div>
+<div style="font-size:24px;font-weight:700;margin-bottom:10px">บันทึกแล้ว</div>
+<div style="font-size:15px;color:var(--muted2);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;line-height:1.5">วันนี้คุณยังเหลืองบอาหารอีก<br>
+<span style="color:#2f7d5b;font-weight:700;font-size:18px">฿1,200</span>
+</div>
+<button onClick="{{ goHome }}" style="margin-top:28px;height:50px;padding:0 36px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600">เสร็จสิ้น</button>
+</div>
+</sc-if>
+<sc-if value="{{ addForm }}" hint-placeholder-val="{{ true }}">
+<div style="flex:none;padding:8px 20px 0;display:flex;align-items:center;justify-content:space-between">
+<button onClick="{{ goHome }}" style="font-size:15px;color:var(--muted2)">ยกเลิก</button>
+<div style="font-size:16px;font-weight:700">เพิ่มรายการ</div>
+<div style="width:44px">
+</div>
+</div>
+<!-- segment -->
+<div style="flex:none;padding:18px 20px 0">
+<div style="display:flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px">
+<button onClick="{{ setExpense }}" style="{{ segExpenseStyle }}">รายจ่าย</button>
+<button onClick="{{ setIncome }}" style="{{ segIncomeStyle }}">รายรับ</button>
+</div>
+</div>
+<!-- amount -->
+<div style="flex:none;display:flex;align-items:baseline;justify-content:center;gap:8px;padding:34px 0 28px">
+<span style="font-size:30px;color:#c4c6bc;font-weight:600">฿</span>
+<span style="{{ amountStyle }}">{{ addAmountDisplay }}</span>
+</div>
+<!-- categories -->
+<div class="nl-scroll" style="flex:none;padding:0 16px 16px;display:flex;gap:8px;overflow-x:auto">
+<sc-for list="{{ catChips }}" as="c" hint-placeholder-count="8">
+<button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+</sc-for>
+</div>
+<!-- account + optional -->
+<div style="flex:none;padding:0 20px;display:flex;flex-direction:column;gap:9px">
+<button onClick="{{ pickAccount }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px">
+<span style="font-size:13px;color:var(--muted)">จ่ายจาก</span>
+<span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px">บัญชีหลัก<span style="color:#c4c6bc">›</span>
+</span>
+</button>
+<div style="display:flex;gap:9px">
+<button onClick="{{ pickDate }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;font-size:13px;color:var(--muted2)">📅 วันนี้</button>
+<button onClick="{{ addNote }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;font-size:13px;color:var(--muted2)">📝 โน้ต</button>
+<button onClick="{{ addReceipt }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;font-size:13px;color:var(--muted2)">📎 ใบเสร็จ</button>
+</div>
+</div>
+<div style="flex:1">
+</div>
+<!-- keypad -->
+<div style="flex:none;background:var(--fill2);padding:10px 8px 4px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+<sc-for list="{{ keypad }}" as="k" hint-placeholder-count="12">
+<button onClick="{{ k.onClick }}" style="height:50px;border-radius:11px;background:var(--card);font-size:22px;font-weight:600;color:var(--text);box-shadow:0 1px 1px rgba(40,42,33,0.05)">{{ k.label }}</button>
+</sc-for>
+</div>
+<div style="flex:none;padding:10px 16px 18px;background:var(--fill2)">
+<button onClick="{{ saveTxn }}" style="width:100%;height:54px;border-radius:15px;background:#2f7d5b;color:#fff;font-size:16px;font-weight:600;box-shadow:0 6px 16px -4px rgba(47,125,91,0.5)">บันทึกรายการ</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<!-- ============ TRANSACTIONS ============ -->
+<sc-if value="{{ screenTxns }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px">
+<div style="font-size:21px;font-weight:700">รายการ</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ searchTxn }}" style="width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px">⌕</button>
+<button onClick="{{ toggleEmpty }}" style="width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px">⊜</button>
+</div>
+</div>
+<div class="nl-scroll" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:18px;padding-bottom:2px">
+<sc-for list="{{ txnFilters }}" as="f" hint-placeholder-count="4">
+<button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+</sc-for>
+</div>
+<sc-if value="{{ txnEmpty }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 30px">
+<div style="width:76px;height:76px;border-radius:24px;background:var(--track);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px">🧾</div>
+<div style="font-size:17px;font-weight:700;margin-bottom:8px">ยังไม่มีรายการ</div>
+<div style="font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:24px">เริ่มบันทึกรายจ่ายแรกของคุณได้เลย<br>ใช้เวลาไม่ถึงนาที</div>
+<button onClick="{{ goAdd }}" style="height:48px;padding:0 26px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600">+ เพิ่มรายการแรก</button>
+</div>
+</sc-if>
+<sc-if value="{{ txnHasItems }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<sc-for list="{{ txnGroups }}" as="grp" hint-placeholder-count="3">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;padding:0 2px">
+<span style="font-size:13px;font-weight:600;color:var(--muted2)">{{ grp.label }}</span>
+<span style="font-size:12px;color:#aeb0a6">{{ grp.sum }}</span>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ grp.items }}" as="t" hint-placeholder-count="2">
+<div style="{{ t.rowStyle }}">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ t.name }}</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">{{ t.cat }}</div>
+</div>
+<div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+<div style="text-align:center;font-size:12px;color:#bdbfb5;padding:4px">ปัดซ้ายที่รายการเพื่อแก้ไขหรือลบ</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<!-- ============ PLAN ============ -->
+<sc-if value="{{ screenPlan }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="margin:8px 0 18px">
+<div style="font-size:21px;font-weight:700">แผนเงินเดือนนี้</div>
+<div style="font-size:13px;color:var(--muted);margin-top:2px">มิถุนายน · เหลืออีก 20 วันก่อนเงินเดือนออก</div>
+</div>
+<div style="background:#2f7d5b;border-radius:20px;padding:22px;color:#fff;box-shadow:0 10px 28px -12px rgba(47,125,91,0.5)">
+<div style="font-size:13px;opacity:0.85">เดือนนี้คุณยังใช้ได้อีก</div>
+<div style="font-size:44px;font-weight:800;letter-spacing:-0.03em;margin-top:4px">฿12,800</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-top:12px;display:flex;align-items:center;gap:16px">
+<div style="width:52px;height:52px;border-radius:15px;background:#e8f1ec;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;color:#2f7d5b">
+<span style="font-size:18px;font-weight:800;line-height:1">20</span>
+<span style="font-size:9px">วัน</span>
+</div>
+<div>
+<div style="font-size:13.5px;color:var(--muted)">ถ้าอยากให้เงินพอถึงวันเงินเดือนออก</div>
+<div style="font-size:16px;font-weight:700;margin-top:3px">ใช้ได้ประมาณวันละ <span style="color:#2f7d5b">฿640</span>
+</div>
+</div>
+</div>
+<button onClick="{{ openAi }}" style="margin-top:12px;width:100%;background:linear-gradient(135deg,#3f9d6b,#2f7d5b);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;text-align:left;color:#fff;box-shadow:0 10px 24px -12px rgba(47,125,91,0.6)">
+<div style="width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none">💬</div>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:700">ถามผู้ช่วยเงินทอน</div>
+<div style="font-size:12px;opacity:0.9;margin-top:1px">พิมพ์ถามได้เลย ผมคำนวณจากเงินของคุณให้</div>
+</div>
+<span style="font-size:18px;opacity:0.8">›</span>
+</button>
+<div style="margin:24px 0 12px;font-size:15px;font-weight:700">งบแต่ละหมวด</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ planCats }}" as="c" hint-placeholder-count="5">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+<div style="display:flex;align-items:center;gap:9px">
+<span style="font-size:17px">{{ c.icon }}</span>
+<span style="font-size:14.5px;font-weight:600">{{ c.name }}</span>
+</div>
+<sc-if value="{{ c.warn }}" hint-placeholder-val="{{ true }}">
+<span style="font-size:11px;font-weight:600;color:#c98a3c;background:#faf3e8;padding:3px 9px;border-radius:7px">ใกล้ถึงงบ</span>
+</sc-if>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);margin:10px 0 8px;overflow:hidden">
+<div style="{{ c.barStyle }}">
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px">
+<span style="color:var(--muted)">ใช้ไป {{ c.used }} จาก {{ c.total }}</span>
+<span style="font-weight:600;color:{{ c.leftColor }}">เหลือ {{ c.left }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:16px;padding:18px;margin-top:18px">
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2f7d5b;margin-bottom:8px">
+<span style="width:22px;height:22px;border-radius:7px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">✦</span>คำแนะนำเล็ก ๆ</div>
+<div style="font-size:14px;line-height:1.6;color:#3a4d42">เดือนนี้ค่าอาหารสูงกว่าปกติเล็กน้อย ถ้าลดลงวันละประมาณ <b>฿100</b> ใน 7 วันที่เหลือ คุณจะกลับมาอยู่ในแผนได้พอดี ไม่ต้องกังวลครับ</div>
+</div>
+</div>
+</sc-if>
+<!-- ============ BILLS ============ -->
+<sc-if value="{{ screenBills }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="margin:8px 0 6px;font-size:21px;font-weight:700">บิลที่ต้องจ่าย</div>
+<div style="font-size:13px;color:var(--muted);margin-bottom:22px">เดือนนี้มี 4 บิล รวม ฿9,409</div>
+<div style="position:relative;padding-left:8px">
+<div style="position:absolute;left:23px;top:14px;bottom:14px;width:2px;background:#ece8df">
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ billsTimeline }}" as="b" hint-placeholder-count="4">
+<div style="display:flex;gap:16px;align-items:flex-start;position:relative">
+<div style="flex:none;width:34px;display:flex;flex-direction:column;align-items:center;z-index:1">
+<div style="{{ b.dotStyle }}">
+</div>
+<div style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center;font-weight:600">{{ b.date }}</div>
+</div>
+<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:15px;padding:14px 16px;display:flex;align-items:center;gap:12px;{{ b.cardExtra }}">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:17px">{{ b.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ b.name }}</div>
+<div style="font-size:14px;font-weight:700;margin-top:2px">{{ b.amount }}</div>
+</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+<span style="{{ b.statusStyle }}">{{ b.status }}</span>
+<div style="display:flex;gap:6px">
+<button onClick="{{ b.onEdit }}" style="width:30px;height:30px;border-radius:9px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:13px">✎</button>
+<button onClick="{{ b.onDelete }}" style="width:30px;height:30px;border-radius:9px;background:#fbecea;color:#d9776a;display:flex;align-items:center;justify-content:center;font-size:13px">🗑</button>
+</div>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<button onClick="{{ addBill }}" style="margin-top:22px;width:100%;height:50px;border-radius:14px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:15px;font-weight:600">+ เพิ่มบิลประจำ</button>
+</div>
+</sc-if>
+<!-- ============ ACCOUNTS ============ -->
+<sc-if value="{{ screenAccounts }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="margin:8px 0 18px;font-size:21px;font-weight:700">บัญชีของฉัน</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:18px">
+<div style="font-size:13px;color:var(--muted)">เงินที่มีรวมทั้งหมด</div>
+<div style="font-size:34px;font-weight:800;letter-spacing:-0.02em;margin-top:4px">฿32,000</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">เงินที่มี</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px">
+<sc-for list="{{ assetRows }}" as="a" hint-placeholder-count="3">
+<div style="{{ a.rowStyle }}">
+<div style="width:40px;height:40px;border-radius:12px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:17px">{{ a.icon }}</div>
+<div style="flex:1;font-size:14.5px;font-weight:600">{{ a.name }}</div>
+<div style="font-size:15px;font-weight:700">{{ a.amount }}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ยอดที่ต้องจ่าย</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ debtRows }}" as="d" hint-placeholder-count="2">
+<div style="{{ d.rowStyle }}">
+<div style="width:40px;height:40px;border-radius:12px;background:#fbecea;display:flex;align-items:center;justify-content:center;font-size:17px">{{ d.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ d.name }}</div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ d.sub }}</div>
+</div>
+<div style="font-size:15px;font-weight:700;color:#d9776a">{{ d.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<!-- ============ GOALS ============ -->
+<sc-if value="{{ screenGoals }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="margin:8px 0 18px;font-size:21px;font-weight:700">เป้าหมายของฉัน</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ goalCards }}" as="g" hint-placeholder-count="2">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 1px 2px rgba(40,42,33,0.04),0 8px 22px -14px rgba(40,42,33,0.12)">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+<div style="width:46px;height:46px;border-radius:14px;background:{{ g.iconBg }};display:flex;align-items:center;justify-content:center;font-size:22px">{{ g.icon }}</div>
+<div style="flex:1">
+<div style="font-size:16px;font-weight:700">{{ g.name }}</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:1px">เป้าหมาย {{ g.target }}</div>
+</div>
+<div style="font-size:20px;font-weight:800;color:#2f7d5b">{{ g.pct }}</div>
+<button onClick="{{ g.onDelete }}" style="width:30px;height:30px;border-radius:9px;background:#fbecea;color:#d9776a;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none">🗑</button>
+</div>
+<div style="height:11px;border-radius:7px;background:var(--track);overflow:hidden">
+<div style="{{ g.barStyle }}">
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px">
+<span style="color:var(--muted2)">เก็บแล้ว <b style="color:var(--text)">{{ g.saved }}</b>
+</span>
+<span style="color:var(--muted)">{{ g.remaining }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+<button onClick="{{ createGoal }}" style="margin-top:16px;width:100%;height:50px;border-radius:14px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:15px;font-weight:600">+ สร้างเป้าหมาย</button>
+</div>
+</sc-if>
+<!-- ============ MORE ============ -->
+<sc-if value="{{ screenMore }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="margin:8px 0 18px;font-size:21px;font-weight:700">เพิ่มเติม</div>
+<!-- profile -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;margin-bottom:18px">
+<div style="width:52px;height:52px;border-radius:50%;background:#e8f1ec;border:1px solid #d6e6dd;display:flex;align-items:center;justify-content:center;color:#2f7d5b;font-weight:700;font-size:19px">บ</div>
+<div style="flex:1">
+<div style="font-size:16px;font-weight:700">บอล</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:1px">แตะเพื่อแก้ไขโปรไฟล์</div>
+</div>
+<span style="font-size:18px;color:#c4c6bc">›</span>
+</div>
+<!-- mode toggle -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:18px">
+<div style="font-size:14.5px;font-weight:700;margin-bottom:4px">โหมดการใช้งาน</div>
+<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">เริ่มแบบง่ายก่อน เปิดฟีเจอร์ละเอียดเมื่อพร้อม</div>
+<div style="display:flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px">
+<button onClick="{{ setBeginner }}" style="{{ modeBeginnerStyle }}">เริ่มต้นใช้ง่าย</button>
+<button onClick="{{ setAdvanced }}" style="{{ modeAdvancedStyle }}">ขั้นสูง</button>
+</div>
+</div>
+<!-- main menu -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:18px">
+<sc-for list="{{ moreMain }}" as="m" hint-placeholder-count="4">
+<button onClick="{{ m.onClick }}" style="{{ m.rowStyle }}">
+<div style="width:40px;height:40px;border-radius:12px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:18px">{{ m.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ m.label }}</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">{{ m.sub }}</div>
+</div>
+<span style="font-size:17px;color:#c4c6bc">›</span>
+</button>
+</sc-for>
+</div>
+<!-- advanced features (hidden until advanced mode) -->
+<sc-if value="{{ isAdvanced }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px;display:flex;align-items:center;gap:7px">
+<span style="width:7px;height:7px;border-radius:50%;background:#2f7d5b">
+</span>ฟีเจอร์ขั้นสูง</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+<sc-for list="{{ moreAdvanced }}" as="m" hint-placeholder-count="4">
+<div style="{{ m.rowStyle }}">
+<div style="width:40px;height:40px;border-radius:12px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:18px">{{ m.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ m.label }}</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">{{ m.sub }}</div>
+</div>
+<span style="font-size:17px;color:#c4c6bc">›</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ isBeginner }}" hint-placeholder-val="{{ true }}">
+<div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start">
+<span style="width:26px;height:26px;border-radius:8px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none">✦</span>
+<div style="font-size:13px;color:#3a4d42;line-height:1.55">ตอนนี้คุณใช้โหมดเริ่มต้น เรียบง่าย ไม่ซับซ้อน เมื่อพร้อมอยากดูรายงานละเอียดหรือส่งออกข้อมูล เปิด “ขั้นสูง” ได้ตลอดครับ</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<!-- ============ SETTINGS ============ -->
+<sc-if value="{{ screenSettings }}" hint-placeholder-val="{{ true }}">
+<div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+<div style="display:flex;align-items:center;gap:12px;margin:6px 0 20px">
+<button onClick="{{ goMore }}" style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+<div style="font-size:21px;font-weight:700;white-space:nowrap">ตั้งค่า</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">บัญชีและโปรไฟล์</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<span style="font-size:18px;width:24px;text-align:center">👤</span>
+<span style="flex:1;font-size:14.5px;font-weight:500">ข้อมูลส่วนตัว</span>
+<span style="font-size:17px;color:#c4c6bc">›</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<span style="font-size:18px;width:24px;text-align:center">💳</span>
+<span style="flex:1;font-size:14.5px;font-weight:500">วันเงินเดือนออก</span>
+<span style="font-size:13.5px;color:var(--muted)">ทุกวันที่ 25 ›</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px">
+<span style="font-size:18px;width:24px;text-align:center">🎯</span>
+<span style="flex:1;font-size:14.5px;font-weight:500">เป้าหมายหลัก</span>
+<span style="font-size:13.5px;color:var(--muted)">มีเงินเหลือปลายเดือน ›</span>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">การแจ้งเตือน</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<div>
+<div style="font-size:14.5px;font-weight:500">เตือนก่อนบิลถึงกำหนด</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">ล่วงหน้า 3 วัน</div>
+</div>
+<div style="flex:1">
+</div>
+<button onClick="{{ swBillsClick }}" style="{{ swBillsTrack }}">
+<span style="{{ swBillsKnob }}">
+</span>
+</button>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<div>
+<div style="font-size:14.5px;font-weight:500">เตือนเมื่อใกล้เกินงบ</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">เมื่อใช้ถึง 80% ของงบ</div>
+</div>
+<div style="flex:1">
+</div>
+<button onClick="{{ swBudgetClick }}" style="{{ swBudgetTrack }}">
+<span style="{{ swBudgetKnob }}">
+</span>
+</button>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px">
+<div>
+<div style="font-size:14.5px;font-weight:500">สรุปประจำสัปดาห์</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">ทุกเช้าวันจันทร์</div>
+</div>
+<div style="flex:1">
+</div>
+<button onClick="{{ swWeeklyClick }}" style="{{ swWeeklyTrack }}">
+<span style="{{ swWeeklyKnob }}">
+</span>
+</button>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ธีมแอป</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:22px">
+<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">เลือกสีพื้นของแอป ตัวอักษรจะปรับโทนให้อ่านง่ายอัตโนมัติ</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+<sc-for list="{{ themeOptions }}" as="t" hint-placeholder-count="6">
+<div>
+<div onClick="{{ t.onClick }}" style="{{ t.swatchStyle }}">
+<span style="{{ t.tickStyle }}">✓</span>
+</div>
+<div style="{{ t.labelStyle }}">{{ t.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ความปลอดภัยและการแสดงผล</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<span style="font-size:18px;width:24px;text-align:center">🔒</span>
+<div>
+<div style="font-size:14.5px;font-weight:500">ล็อกด้วยสแกนใบหน้า</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">เปิดแอปต้องยืนยันตัวตน</div>
+</div>
+<div style="flex:1">
+</div>
+<button onClick="{{ swBiometricClick }}" style="{{ swBiometricTrack }}">
+<span style="{{ swBiometricKnob }}">
+</span>
+</button>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px">
+<span style="font-size:18px;width:24px;text-align:center">🙈</span>
+<div>
+<div style="font-size:14.5px;font-weight:500">ซ่อนจำนวนเงิน</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">แสดงเป็น ••• จนกว่าจะแตะ</div>
+</div>
+<div style="flex:1">
+</div>
+<button onClick="{{ swHideAmountsClick }}" style="{{ swHideAmountsTrack }}">
+<span style="{{ swHideAmountsKnob }}">
+</span>
+</button>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ทั่วไป</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<span style="font-size:18px;width:24px;text-align:center">🌐</span>
+<span style="flex:1;font-size:14.5px;font-weight:500">ภาษา</span>
+<span style="font-size:13.5px;color:var(--muted)">ไทย ›</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)">
+<span style="font-size:18px;width:24px;text-align:center">💱</span>
+<span style="flex:1;font-size:14.5px;font-weight:500">สกุลเงิน</span>
+<span style="font-size:13.5px;color:var(--muted)">บาท (฿) ›</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:15px 16px">
+<span style="font-size:18px;width:24px;text-align:center">💬</span>
+<span style="flex:1;font-size:14.5px;font-weight:500">ช่วยเหลือและติดต่อเรา</span>
+<span style="font-size:17px;color:#c4c6bc">›</span>
+</div>
+</div>
+<button onClick="{{ logout }}" style="width:100%;height:50px;border-radius:14px;background:var(--card);border:1px solid #f0dad5;color:#d9776a;font-size:15px;font-weight:600">ออกจากระบบ</button>
+<div style="text-align:center;font-size:12px;color:#bdbfb5;margin-top:18px">เงินทอน · เวอร์ชัน 1.0.0</div>
+</div>
+</sc-if>
+</div>
+<!-- BOTTOM NAV -->
+<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+<div style="flex:none;position:relative;background:var(--card);border-top:1px solid #ece8df;padding:8px 14px 26px;display:flex;align-items:flex-end;justify-content:space-between">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+<button onClick="{{ n.onClick }}" style="{{ n.style }}">
+<span style="font-size:20px;line-height:1">{{ n.icon }}</span>
+<span style="font-size:10.5px;font-weight:500">{{ n.label }}</span>
+</button>
+</sc-for>
+<button onClick="{{ goAdd }}" style="position:absolute;left:50%;top:-18px;transform:translateX(-50%);width:58px;height:58px;border-radius:20px;background:#2f7d5b;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 18px -4px rgba(47,125,91,0.55);font-size:26px;font-weight:300">+</button>
+</div>
+</sc-if>
+<!-- BOTTOM SHEET -->
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(28,30,26,0.4);z-index:30;animation:nlFade .2s ease;display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;background:var(--bg);border-radius:26px 26px 44px 44px;padding:10px 22px 30px;animation:nlSheetUp .3s cubic-bezier(.2,.8,.2,1)">
+<div style="width:40px;height:4px;border-radius:3px;background:#d6d3c9;margin:0 auto 18px">
+</div>
+<div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+<span style="width:26px;height:26px;border-radius:8px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:14px">✦</span>
+<span style="font-size:17px;font-weight:700">สรุปสั้น ๆ ของเดือนนี้</span>
+</div>
+<div style="font-size:13px;color:var(--muted);margin-bottom:18px">เราดูให้แล้ว ไม่มีอะไรต้องกังวล</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14px;color:var(--muted2)">เดือนนี้คุณใช้เงินไป</span>
+<span style="font-size:16px;font-weight:700">฿41,800</span>
+</div>
+<div style="background:#faf3e8;border:1px solid #f0e3cd;border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14px;color:#9a7b40">ค่าอาหารสูงกว่าปกติ</span>
+<span style="font-size:16px;font-weight:700;color:#c98a3c">+฿1,100</span>
+</div>
+<div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14px;color:#2f7d5b">ยังมีเงินใช้ได้จริง</span>
+<span style="font-size:16px;font-weight:700;color:#2f7d5b">฿12,800</span>
+</div>
+</div>
+<div style="background:var(--card);border:1px dashed #cfe3d8;border-radius:14px;padding:16px;margin-top:14px">
+<div style="font-size:14px;font-weight:600;line-height:1.5">ลองตั้งเป้าลดค่าอาหารวันละ ฿100 ในสัปดาห์นี้</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:4px">ทำได้สบาย ๆ แล้วคุณจะกลับมาอยู่ในแผนพอดี</div>
+</div>
+<div style="display:flex;gap:10px;margin-top:18px">
+<button onClick="{{ closeSheet }}" style="flex:none;padding:0 22px;height:50px;border-radius:14px;background:var(--fill2);color:var(--muted2);font-size:15px;font-weight:600">ไว้ก่อน</button>
+<button onClick="{{ sheetToAi }}" style="flex:1;height:50px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600">วางแผนกับ AI</button>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- TOAST -->
+<sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;left:50%;bottom:108px;transform:translateX(-50%);background:#22251f;color:#fff;padding:12px 18px;border-radius:13px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px;z-index:40;animation:nlToast .3s ease;white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,0.25)">
+<span style="color:#7fd0a3">✓</span>{{ toastMsg }}</div>
+</sc-if>
+<!-- CHAT HEAD (messenger-style FAB) -->
+<sc-if value="{{ chatHeadVisible }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ openAi }}" style="position:absolute;right:16px;bottom:96px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3f9d6b,#2f7d5b);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;z-index:35;box-shadow:0 8px 20px -4px rgba(47,125,91,0.6);animation:nlPop .3s ease">💬</button>
+</sc-if>
+<!-- AI CHAT POPUP -->
+<sc-if value="{{ aiOpen }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;background:var(--bg);animation:nlFade .2s ease">
+<!-- header -->
+<div style="flex:none;display:flex;align-items:center;gap:11px;padding:50px 16px 12px;background:linear-gradient(135deg,#3f9d6b,#2f7d5b);color:#fff">
+<div style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px">✦</div>
+<div style="flex:1;line-height:1.25">
+<div style="font-size:15.5px;font-weight:700">ผู้ช่วยเงินทอน</div>
+<div style="font-size:11px;opacity:0.92;display:flex;align-items:center;gap:5px">
+<span style="width:6px;height:6px;border-radius:50%;background:#a8f0c6;display:inline-block">
+</span>ออนไลน์ · ตอบจากข้อมูลของคุณ</div>
+</div>
+<button onClick="{{ closeAi }}" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.18);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center">✕</button>
+</div>
+<!-- messages -->
+<div class="nl-scroll" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ aiBubbles }}" as="m" hint-placeholder-count="2">
+<div style="{{ m.rowStyle }}">
+<div style="{{ m.bubbleStyle }}">{{ m.text }}</div>
+</div>
+<sc-if value="{{ m.hasGoal }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;justify-content:flex-start">
+<div style="max-width:88%;background:var(--card);border:1px solid #cfe3d8;border-radius:14px;padding:14px;box-shadow:0 6px 16px -10px rgba(40,42,33,0.18)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+<span style="width:38px;height:38px;border-radius:11px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:18px">🎯</span>
+<div>
+<div style="font-size:14px;font-weight:700">{{ m.goalName }}</div>
+<div style="font-size:12px;color:var(--muted)">เป้า {{ m.goalTarget }} · เก็บเดือนละ {{ m.goalPer }}</div>
+</div>
+</div>
+<sc-if value="{{ m.goalActive }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:8px">
+<button onClick="{{ dismissGoal }}" style="flex:none;padding:0 16px;height:40px;border-radius:11px;background:var(--fill2);color:var(--muted2);font-size:13.5px;font-weight:600;font-family:inherit">ไว้ก่อน</button>
+<button onClick="{{ confirmGoal }}" style="flex:1;height:40px;border-radius:11px;background:#2f7d5b;color:#fff;font-size:13.5px;font-weight:600;font-family:inherit">สร้างเป้าหมายนี้</button>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</sc-for>
+<sc-if value="{{ aiThinking }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;justify-content:flex-start">
+<div style="background:var(--fill);border-radius:4px 16px 16px 16px;padding:13px 16px;display:flex;gap:5px">
+<span style="width:7px;height:7px;border-radius:50%;background:var(--muted);animation:nlBlink 1s infinite">
+</span>
+<span style="width:7px;height:7px;border-radius:50%;background:var(--muted);animation:nlBlink 1s infinite .2s">
+</span>
+<span style="width:7px;height:7px;border-radius:50%;background:var(--muted);animation:nlBlink 1s infinite .4s">
+</span>
+</div>
+</div>
+</sc-if>
+</div>
+<!-- suggestion chips -->
+<div class="nl-scroll" style="flex:none;padding:8px 14px 4px;display:flex;gap:8px;overflow-x:auto">
+<sc-for list="{{ aiSuggest }}" as="q" hint-placeholder-count="3">
+<button onClick="{{ q.onClick }}" style="flex:none;white-space:nowrap;padding:8px 13px;border-radius:18px;background:var(--card);border:1px solid #cfe3d8;color:#2f7d5b;font-size:12.5px;font-weight:600;font-family:inherit">{{ q.label }}</button>
+</sc-for>
+</div>
+<!-- input bar -->
+<div style="flex:none;padding:10px 14px 28px;display:flex;align-items:center;gap:9px;border-top:1px solid var(--divider)">
+<input value="{{ aiInput }}" onInput="{{ onAiInput }}" onKeyDown="{{ onAiKey }}" placeholder="พิมพ์ถามได้เลย…" style="flex:1;min-width:0;height:46px;border:1px solid var(--border);border-radius:23px;padding:0 18px;font-size:14px;font-family:inherit;background:var(--card);color:var(--text);outline:none" />
+<button onClick="{{ sendAi }}" style="flex:none;width:46px;height:46px;border-radius:50%;background:#2f7d5b;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center">➤</button>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- WEB + COMPONENTS injected later -->
+<sc-if value="{{ isWeb }}" hint-placeholder-val="{{ true }}">
+<div class="nl-themed" data-theme="{{ themeAttr }}" style="width:1208px;margin:34px auto 0;padding:0 24px;color:var(--text)">
+<!-- browser chrome -->
+<div style="background:#1c1e1a;border-radius:16px 16px 0 0;padding:11px 16px;display:flex;align-items:center;gap:14px">
+<div style="display:flex;gap:7px">
+<span style="width:11px;height:11px;border-radius:50%;background:#ff5f57">
+</span>
+<span style="width:11px;height:11px;border-radius:50%;background:#febc2e">
+</span>
+<span style="width:11px;height:11px;border-radius:50%;background:#28c840">
+</span>
+</div>
+<div style="flex:1;max-width:420px;margin:0 auto;background:#33352f;border-radius:8px;padding:5px 14px;font-size:12px;color:#9a9c92;text-align:center">app.ngernluea.co/dashboard</div>
+<div style="width:54px">
+</div>
+</div>
+<div style="display:flex;background:var(--bg);border-radius:0 0 16px 16px;overflow:hidden;min-height:760px;border:1px solid var(--border);border-top:none">
+<!-- SIDEBAR -->
+<div style="width:236px;flex:none;background:var(--card);border-right:1px solid var(--divider);padding:22px 16px;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:10px;padding:0 8px 22px">
+<div style="width:32px;height:32px;border-radius:9px;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px">฿</div>
+<span style="font-weight:700;font-size:16px">เงินทอน</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:3px">
+<sc-for list="{{ webNav }}" as="n" hint-placeholder-count="8">
+<div onClick="{{ n.onClick }}" style="{{ n.style }}">
+<span style="font-size:16px;width:20px;text-align:center">{{ n.icon }}</span>{{ n.label }}</div>
+</sc-for>
+</div>
+<div style="flex:1">
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--divider)">
+<div style="width:34px;height:34px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;color:#2f7d5b;font-weight:600;font-size:14px">บ</div>
+<div style="line-height:1.2">
+<div style="font-size:13.5px;font-weight:600">บอล</div>
+<div style="font-size:11px;color:var(--muted)">ดูโปรไฟล์</div>
+</div>
+</div>
+</div>
+<!-- MAIN -->
+<!-- CONTENT REGION -->
+<div style="flex:1;display:flex;min-width:0">
+<!-- WEB HOME -->
+<sc-if value="{{ webHome }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;min-width:0">
+<div style="flex:1;padding:30px 32px;min-width:0">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px">
+<div>
+<div style="font-size:23px;font-weight:700;letter-spacing:-0.01em">สวัสดีครับ, บอล</div>
+<div style="font-size:13.5px;color:var(--muted);margin-top:3px">ภาพรวมเดือนมิถุนายน 2568</div>
+</div>
+<button onClick="{{ webAddTxn }}" style="height:42px;padding:0 20px;border-radius:12px;background:#2f7d5b;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px">+ เพิ่มรายการ</button>
+</div>
+<!-- top stat row -->
+<div style="display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:16px">
+<div style="background:#2f7d5b;border-radius:18px;padding:22px;color:#fff;position:relative;overflow:hidden">
+<div style="position:absolute;right:-26px;top:-26px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07)">
+</div>
+<div style="font-size:13px;opacity:0.85">เงินที่ใช้ได้จริง</div>
+<div style="font-size:40px;font-weight:800;letter-spacing:-0.02em;margin:6px 0 4px">฿12,800</div>
+<div style="font-size:12.5px;opacity:0.8">หลังหักบิลและค่าใช้จ่ายที่รอแล้ว</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+<div style="font-size:12.5px;color:var(--muted)">เงินในบัญชีทั้งหมด</div>
+<div style="font-size:27px;font-weight:700;margin-top:8px">฿50,000</div>
+<div style="font-size:12px;color:#3f9d6b;margin-top:8px">↑ มากกว่าเดือนก่อน</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+<div style="font-size:12.5px;color:var(--muted)">ต้องกันไว้</div>
+<div style="font-size:27px;font-weight:700;margin-top:8px;color:#c98a3c">฿37,200</div>
+<div style="font-size:12px;color:var(--muted);margin-top:8px">บิล หนี้ และเป้าหมาย</div>
+</div>
+</div>
+<!-- chart + in/out -->
+<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<span style="font-size:15px;font-weight:700">รายจ่ายรายสัปดาห์</span>
+<span style="font-size:12.5px;color:var(--muted)">4 สัปดาห์ล่าสุด</span>
+</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-around;gap:18px;height:170px">
+<sc-for list="{{ weekBars }}" as="w" hint-placeholder-count="4">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;height:100%;justify-content:flex-end">
+<span style="font-size:12px;font-weight:600;color:var(--muted2)">{{ w.amount }}</span>
+<div style="width:100%;max-width:56px;border-radius:10px 10px 4px 4px;{{ w.barStyle }}">
+</div>
+<span style="font-size:12px;color:var(--muted)">{{ w.label }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<div>
+<div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)">
+<span style="width:9px;height:9px;border-radius:3px;background:#3f9d6b">
+</span>เงินเข้าเดือนนี้</div>
+<div style="font-size:28px;font-weight:700;color:#3f9d6b;margin-top:5px">฿70,000</div>
+</div>
+<div style="height:1px;background:var(--divider)">
+</div>
+<div>
+<div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)">
+<span style="width:9px;height:9px;border-radius:3px;background:#d9776a">
+</span>เงินออกเดือนนี้</div>
+<div style="font-size:28px;font-weight:700;color:#d9776a;margin-top:5px">฿41,800</div>
+</div>
+<div style="font-size:12.5px;color:#3f9d6b;background:#eef7f1;border-radius:10px;padding:9px 12px">↓ ใช้จ่ายน้อยกว่าเดือนก่อน 8%</div>
+</div>
+</div>
+<!-- budgets watch + recent -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+<div style="font-size:15px;font-weight:700;margin-bottom:16px">งบที่ต้องระวัง</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<sc-for list="{{ watchBudgets }}" as="g" hint-placeholder-count="2">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+<span style="font-size:13.5px;font-weight:600">{{ g.name }}</span>
+<span style="{{ g.tagStyle }}">{{ g.tag }}</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden">
+<div style="{{ g.barStyle }}">
+</div>
+</div>
+<div style="font-size:12px;color:var(--muted);margin-top:7px">{{ g.detail }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+<span style="font-size:15px;font-weight:700">รายการล่าสุด</span>
+<button onClick="{{ webGoTxns }}" style="font-size:12.5px;color:#2f7d5b;font-weight:600">ดูทั้งหมด</button>
+</div>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ webRecent }}" as="t" hint-placeholder-count="4">
+<div style="{{ t.rowStyle }}">
+<div style="width:36px;height:36px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:15px">{{ t.icon }}</div>
+<div style="flex:1">
+<div style="font-size:13.5px;font-weight:600">{{ t.name }}</div>
+<div style="font-size:11.5px;color:var(--muted)">{{ t.meta }}</div>
+</div>
+<div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT PANEL -->
+<div style="width:312px;flex:none;background:var(--card);border-left:1px solid var(--divider);padding:26px 22px;display:flex;flex-direction:column;gap:22px">
+<div>
+<div style="font-size:14.5px;font-weight:700;margin-bottom:13px">บิลที่ใกล้ถึง</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ upcomingBills }}" as="b" hint-placeholder-count="3">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:11px">
+<div style="width:34px;height:34px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:15px">{{ b.icon }}</div>
+<div style="flex:1">
+<div style="font-size:13.5px;font-weight:600">{{ b.name }}</div>
+<div style="font-size:11.5px;color:var(--muted)">{{ b.due }}</div>
+</div>
+<div style="font-size:13.5px;font-weight:700">{{ b.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:16px;padding:18px">
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2f7d5b;margin-bottom:10px">
+<span style="width:22px;height:22px;border-radius:7px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">✦</span>สรุปสั้น ๆ</div>
+<div style="font-size:13.5px;line-height:1.65;color:#3a4d42">เดือนนี้ค่าอาหารสูงกว่าปกติ ฿1,100 แต่คุณยังมีเงินใช้ได้จริง ฿12,800 ลองลดค่าอาหารวันละ ฿100 ในสัปดาห์นี้ก็กลับมาอยู่ในแผนได้ครับ</div>
+<button onClick="{{ webViewDetail }}" style="margin-top:14px;width:100%;height:40px;border-radius:11px;background:#2f7d5b;color:#fff;font-size:13.5px;font-weight:600">ดูรายละเอียด</button>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px">
+<div style="font-size:14px;font-weight:700;margin-bottom:12px">เป้าหมายใกล้สำเร็จ</div>
+<div style="display:flex;align-items:center;gap:11px;margin-bottom:10px">
+<div style="width:36px;height:36px;border-radius:11px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:17px">🛟</div>
+<div style="flex:1">
+<div style="font-size:13px;font-weight:600">เงินฉุกเฉิน</div>
+<div style="font-size:11.5px;color:var(--muted)">฿82,000 / ฿200,000</div>
+</div>
+<span style="font-size:15px;font-weight:800;color:#2f7d5b">41%</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden">
+<div style="height:100%;width:41%;border-radius:6px;background:linear-gradient(90deg,#3f9d6b,#2f7d5b)">
+</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- WEB: TRANSACTIONS -->
+<sc-if value="{{ webTxns }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+<div style="font-size:23px;font-weight:700">รายการทั้งหมด</div>
+<button onClick="{{ webAddTxn }}" style="height:42px;padding:0 20px;border-radius:12px;background:#2f7d5b;color:#fff;font-size:14px;font-weight:600">+ เพิ่มรายการ</button>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:20px">
+<sc-for list="{{ txnFilters }}" as="f" hint-placeholder-count="4">
+<button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+</sc-for>
+</div>
+<div style="max-width:720px;display:flex;flex-direction:column;gap:22px">
+<sc-for list="{{ txnGroups }}" as="grp" hint-placeholder-count="3">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;padding:0 2px">
+<span style="font-size:13px;font-weight:600;color:var(--muted2)">{{ grp.label }}</span>
+<span style="font-size:12px;color:var(--muted)">{{ grp.sum }}</span>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ grp.items }}" as="t" hint-placeholder-count="2">
+<div style="{{ t.rowStyle }}">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ t.name }}</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">{{ t.cat }}</div>
+</div>
+<div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<!-- WEB: PLAN -->
+<sc-if value="{{ webPlan }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="font-size:23px;font-weight:700;margin-bottom:4px">แผนเงินเดือนนี้</div>
+<div style="font-size:13.5px;color:var(--muted);margin-bottom:22px">มิถุนายน · เหลืออีก 20 วันก่อนเงินเดือนออก</div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:16px">
+<div style="background:#2f7d5b;border-radius:18px;padding:24px;color:#fff">
+<div style="font-size:13px;opacity:0.85">เดือนนี้คุณยังใช้ได้อีก</div>
+<div style="font-size:42px;font-weight:800;letter-spacing:-0.02em;margin-top:4px">฿12,800</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;display:flex;align-items:center;gap:16px">
+<div style="width:54px;height:54px;border-radius:15px;background:#e8f1ec;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;color:#2f7d5b">
+<span style="font-size:19px;font-weight:800;line-height:1">20</span>
+<span style="font-size:9px">วัน</span>
+</div>
+<div>
+<div style="font-size:13px;color:var(--muted)">ใช้ได้ประมาณวันละ</div>
+<div style="font-size:22px;font-weight:800;color:#2f7d5b">฿640</div>
+</div>
+</div>
+</div>
+<div style="font-size:15px;font-weight:700;margin:8px 0 12px">งบแต่ละหมวด</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<sc-for list="{{ planCats }}" as="c" hint-placeholder-count="5">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+<div style="display:flex;align-items:center;gap:9px">
+<span style="font-size:17px">{{ c.icon }}</span>
+<span style="font-size:14.5px;font-weight:600">{{ c.name }}</span>
+</div>
+<sc-if value="{{ c.warn }}" hint-placeholder-val="{{ true }}">
+<span style="font-size:11px;font-weight:600;color:#c98a3c;background:#faf3e8;padding:3px 9px;border-radius:7px">ใกล้ถึงงบ</span>
+</sc-if>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);margin:10px 0 8px;overflow:hidden">
+<div style="{{ c.barStyle }}">
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px">
+<span style="color:var(--muted)">ใช้ไป {{ c.used }} จาก {{ c.total }}</span>
+<span style="font-weight:600;color:{{ c.leftColor }}">เหลือ {{ c.left }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<!-- WEB: BILLS -->
+<sc-if value="{{ webBills }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+<div>
+<div style="font-size:23px;font-weight:700">บิลที่ต้องจ่าย</div>
+<div style="font-size:13.5px;color:var(--muted);margin-top:3px">เดือนนี้มี 4 บิล รวม ฿9,409</div>
+</div>
+<button onClick="{{ webAddBill }}" style="height:42px;padding:0 20px;border-radius:12px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:14px;font-weight:600">+ เพิ่มบิลประจำ</button>
+</div>
+<div style="max-width:720px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ billsTimeline }}" as="b" hint-placeholder-count="4">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:15px;padding:15px 18px;display:flex;align-items:center;gap:14px;{{ b.cardExtra }}">
+<div style="width:48px;text-align:center;font-size:12px;font-weight:700;color:var(--muted2)">{{ b.date }}</div>
+<div style="width:40px;height:40px;border-radius:12px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:18px">{{ b.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ b.name }}</div>
+<div style="font-size:14px;font-weight:700;margin-top:2px">{{ b.amount }}</div>
+</div>
+<span style="{{ b.statusStyle }}">{{ b.status }}</span>
+<button onClick="{{ b.onEdit }}" style="width:34px;height:34px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:14px">✎</button>
+<button onClick="{{ b.onDelete }}" style="width:34px;height:34px;border-radius:10px;background:#fbecea;color:#d9776a;display:flex;align-items:center;justify-content:center;font-size:14px">🗑</button>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<!-- WEB: ACCOUNTS -->
+<sc-if value="{{ webAccounts }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="font-size:23px;font-weight:700;margin-bottom:22px">บัญชีของฉัน</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:22px;max-width:420px">
+<div style="font-size:13px;color:var(--muted)">เงินที่มีรวมทั้งหมด</div>
+<div style="font-size:36px;font-weight:800;letter-spacing:-0.02em;margin-top:4px">฿32,000</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:760px">
+<div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">เงินที่มี</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ assetRows }}" as="a" hint-placeholder-count="3">
+<div style="{{ a.rowStyle }}">
+<div style="width:40px;height:40px;border-radius:12px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:17px">{{ a.icon }}</div>
+<div style="flex:1;font-size:14.5px;font-weight:600">{{ a.name }}</div>
+<div style="font-size:15px;font-weight:700">{{ a.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ยอดที่ต้องจ่าย</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<sc-for list="{{ debtRows }}" as="d" hint-placeholder-count="2">
+<div style="{{ d.rowStyle }}">
+<div style="width:40px;height:40px;border-radius:12px;background:#fbecea;display:flex;align-items:center;justify-content:center;font-size:17px">{{ d.icon }}</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">{{ d.name }}</div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ d.sub }}</div>
+</div>
+<div style="font-size:15px;font-weight:700;color:#d9776a">{{ d.amount }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- WEB: GOALS -->
+<sc-if value="{{ webGoals }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+<div style="font-size:23px;font-weight:700">เป้าหมายของฉัน</div>
+<button onClick="{{ webCreateGoal }}" style="height:42px;padding:0 20px;border-radius:12px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:14px;font-weight:600">+ สร้างเป้าหมาย</button>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:760px">
+<sc-for list="{{ goalCards }}" as="g" hint-placeholder-count="2">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+<div style="width:48px;height:48px;border-radius:14px;background:{{ g.iconBg }};display:flex;align-items:center;justify-content:center;font-size:23px">{{ g.icon }}</div>
+<div style="flex:1">
+<div style="font-size:16px;font-weight:700">{{ g.name }}</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:1px">เป้าหมาย {{ g.target }}</div>
+</div>
+<div style="font-size:21px;font-weight:800;color:#2f7d5b">{{ g.pct }}</div>
+<button onClick="{{ g.onDelete }}" style="width:34px;height:34px;border-radius:10px;background:#fbecea;color:#d9776a;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none">🗑</button>
+</div>
+<div style="height:11px;border-radius:7px;background:var(--track);overflow:hidden">
+<div style="{{ g.barStyle }}">
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px">
+<span style="color:var(--muted2)">เก็บแล้ว {{ g.saved }}</span>
+<span style="color:var(--muted)">{{ g.remaining }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<!-- WEB: REPORTS -->
+<sc-if value="{{ webReports }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="font-size:23px;font-weight:700;margin-bottom:4px">รายงาน</div>
+<div style="font-size:13.5px;color:var(--muted);margin-bottom:22px">ภาพรวมการใช้เงินเดือนมิถุนายน — เข้าใจง่าย ไม่ซับซ้อน</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px">
+<div style="font-size:12.5px;color:var(--muted)">เงินเข้า</div>
+<div style="font-size:26px;font-weight:800;color:#3f9d6b;margin-top:6px">฿70,000</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px">
+<div style="font-size:12.5px;color:var(--muted)">เงินออก</div>
+<div style="font-size:26px;font-weight:800;color:#d9776a;margin-top:6px">฿41,800</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px">
+<div style="font-size:12.5px;color:var(--muted)">เหลือเก็บ</div>
+<div style="font-size:26px;font-weight:800;color:#2f7d5b;margin-top:6px">฿28,200</div>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:16px;max-width:760px">
+<div style="font-size:15px;font-weight:700;margin-bottom:20px">รายจ่ายรายสัปดาห์</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-around;gap:24px;height:200px">
+<sc-for list="{{ weekBars }}" as="w" hint-placeholder-count="4">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;height:100%;justify-content:flex-end">
+<span style="font-size:12px;font-weight:600;color:var(--muted2)">{{ w.amount }}</span>
+<div style="width:100%;max-width:64px;border-radius:10px 10px 4px 4px;{{ w.barStyle }}">
+</div>
+<span style="font-size:12px;color:var(--muted)">{{ w.label }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;max-width:760px">
+<div style="font-size:15px;font-weight:700;margin-bottom:18px">รายจ่ายแยกตามหมวด</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ planCats }}" as="c" hint-placeholder-count="5">
+<div>
+<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px">
+<span style="display:flex;align-items:center;gap:8px">{{ c.icon }} {{ c.name }}</span>
+<span style="color:var(--muted2);font-weight:600">{{ c.used }}</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden">
+<div style="{{ c.barStyle }}">
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- WEB: SETTINGS -->
+<sc-if value="{{ webSettings }}" hint-placeholder-val="{{ true }}">
+<div class="nl-scroll" style="flex:1;padding:30px 32px;overflow-y:auto;max-height:760px">
+<div style="font-size:23px;font-weight:700;margin-bottom:22px">ตั้งค่า</div>
+<div style="max-width:620px;display:flex;flex-direction:column;gap:22px">
+<div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ธีมแอป</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px">
+<div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">เลือกสีพื้นของแดชบอร์ด ตัวอักษรจะปรับโทนให้อ่านง่ายอัตโนมัติ</div>
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+<sc-for list="{{ themeOptions }}" as="t" hint-placeholder-count="6">
+<div>
+<div onClick="{{ t.onClick }}" style="{{ t.swatchStyle }}">
+<span style="{{ t.tickStyle }}">✓</span>
+</div>
+<div style="{{ t.labelStyle }}">{{ t.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">การแจ้งเตือน</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--divider)">
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:500">เตือนก่อนบิลถึงกำหนด</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">ล่วงหน้า 3 วัน</div>
+</div>
+<button onClick="{{ swBillsClick }}" style="{{ swBillsTrack }}">
+<span style="{{ swBillsKnob }}">
+</span>
+</button>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:16px 18px">
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:500">สรุปประจำสัปดาห์</div>
+<div style="font-size:12px;color:var(--muted);margin-top:1px">ทุกเช้าวันจันทร์</div>
+</div>
+<button onClick="{{ swWeeklyClick }}" style="{{ swWeeklyTrack }}">
+<span style="{{ swWeeklyKnob }}">
+</span>
+</button>
+</div>
+</div>
+</div>
+<div>
+<div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ทั่วไป</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--divider)">
+<span style="flex:1;font-size:14.5px;font-weight:500">ภาษา</span>
+<span style="font-size:13.5px;color:var(--muted)">ไทย ›</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:16px 18px">
+<span style="flex:1;font-size:14.5px;font-weight:500">สกุลเงิน</span>
+<span style="font-size:13.5px;color:var(--muted)">บาท (฿) ›</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+<div style="height:34px">
+</div>
+<sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ true }}">
+<div style="position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:#22251f;color:#fff;padding:13px 20px;border-radius:13px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:9px;z-index:90;animation:nlToast .3s ease;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,0.28)">
+<span style="color:#7fd0a3">✓</span>{{ toastMsg }}</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ isComponents }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;max-width:1000px;margin:0 auto;padding:40px 24px 0">
+<div style="margin-bottom:32px">
+<div style="font-size:26px;font-weight:800;letter-spacing:-0.02em">ระบบดีไซน์ · เงินทอน</div>
+<div style="font-size:14px;color:var(--muted);margin-top:4px">สี ตัวอักษร และคอมโพเนนต์ที่ใช้ซ้ำทั้งแอป — สงบ เป็นมิตร อ่านง่าย</div>
+</div>
+<!-- COLORS -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">สี</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+<sc-for list="{{ swatches }}" as="c" hint-placeholder-count="8">
+<div>
+<div style="height:58px;border-radius:12px;{{ c.box }}">
+</div>
+<div style="font-size:13px;font-weight:600;margin-top:9px">{{ c.name }}</div>
+<div style="font-size:11.5px;color:var(--muted);font-family:monospace">{{ c.hex }}</div>
+</div>
+</sc-for>
+</div>
+<!-- TYPE -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">ตัวอักษร · Noto Sans Thai</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font-size:46px;font-weight:800;letter-spacing:-0.03em">฿12,800</span>
+<span style="font-size:12px;color:var(--muted)">จำนวนเงินหลัก · 46 / 800</span>
+</div>
+<div style="height:1px;background:var(--divider)">
+</div>
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font-size:23px;font-weight:700">หัวข้อหน้า</span>
+<span style="font-size:12px;color:var(--muted)">23 / 700</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font-size:15px;font-weight:700">หัวข้อส่วน</span>
+<span style="font-size:12px;color:var(--muted)">15 / 700</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font-size:14px;font-weight:400">ข้อความเนื้อหาทั่วไป อ่านสบายตา</span>
+<span style="font-size:12px;color:var(--muted)">14 / 400</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font-size:12.5px;color:var(--muted)">ข้อความรอง คำอธิบายเล็ก ๆ</span>
+<span style="font-size:12px;color:var(--muted)">12.5 / muted</span>
+</div>
+</div>
+<!-- BUTTONS -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">ปุ่ม</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+<button style="height:48px;padding:0 24px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600;box-shadow:0 6px 16px -4px rgba(47,125,91,0.5)">ปุ่มหลัก</button>
+<button style="height:48px;padding:0 24px;border-radius:14px;background:var(--track);color:#3a4d42;font-size:15px;font-weight:600">ปุ่มรอง</button>
+<button style="height:48px;padding:0 24px;border-radius:14px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:15px;font-weight:600">+ เพิ่มบิลประจำ</button>
+<button style="width:48px;height:48px;border-radius:14px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2)">⌕</button>
+<button style="height:48px;padding:0 20px;border-radius:14px;background:#fbecea;color:#d9776a;font-size:15px;font-weight:600">ลบรายการ</button>
+</div>
+<!-- INPUTS + chips + selector -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">ฟิลด์ & ตัวเลือก</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div>
+<div style="font-size:12px;color:var(--muted);margin-bottom:6px">ช่องกรอกข้อความ</div>
+<div style="height:48px;border:1px solid #e0ddd4;border-radius:13px;display:flex;align-items:center;padding:0 14px;font-size:14px;color:var(--text)">ค่ากาแฟเช้านี้</div>
+</div>
+<div>
+<div style="font-size:12px;color:var(--muted);margin-bottom:6px">ช่องกรอกจำนวนเงิน</div>
+<div style="height:60px;border:1.5px solid #2f7d5b;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:6px">
+<span style="font-size:22px;color:#c4c6bc">฿</span>
+<span style="font-size:30px;font-weight:800;letter-spacing:-0.02em">145</span>
+</div>
+</div>
+<div>
+<div style="font-size:12px;color:var(--muted);margin-bottom:6px">เลือกบัญชี</div>
+<div style="height:48px;border:1px solid #e0ddd4;border-radius:13px;display:flex;align-items:center;justify-content:space-between;padding:0 14px">
+<span style="font-size:13px;color:var(--muted)">จ่ายจาก</span>
+<span style="font-size:14px;font-weight:600">บัญชีหลัก ›</span>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div>
+<div style="font-size:12px;color:var(--muted);margin-bottom:8px">หมวด (chip)</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span style="padding:9px 15px;border-radius:20px;background:#2f7d5b;color:#fff;font-size:13px;font-weight:500">อาหาร</span>
+<span style="padding:9px 15px;border-radius:20px;background:var(--card);border:1px solid #e6e2d9;color:var(--muted2);font-size:13px">เดินทาง</span>
+<span style="padding:9px 15px;border-radius:20px;background:var(--card);border:1px solid #e6e2d9;color:var(--muted2);font-size:13px">ช้อปปิ้ง</span>
+</div>
+</div>
+<div>
+<div style="font-size:12px;color:var(--muted);margin-bottom:8px">ตัวกรอง (chip)</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span style="padding:9px 16px;border-radius:11px;background:#22251f;color:#fff;font-size:13px;font-weight:600">ทั้งหมด</span>
+<span style="padding:9px 16px;border-radius:11px;background:var(--card);border:1px solid #ddd9d0;color:var(--muted2);font-size:13px;font-weight:600">รายจ่าย</span>
+</div>
+</div>
+<div>
+<div style="font-size:12px;color:var(--muted);margin-bottom:8px">สเต็ปเปอร์ / Segment</div>
+<div style="display:inline-flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px">
+<span style="padding:9px 22px;border-radius:10px;background:var(--card);color:#d9776a;font-size:14px;font-weight:600;box-shadow:0 1px 2px rgba(40,42,33,0.1)">รายจ่าย</span>
+<span style="padding:9px 22px;border-radius:10px;color:#8a8c82;font-size:14px;font-weight:600">รายรับ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- progress + badges -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">Progress & สถานะ</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr;gap:28px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px">
+<span style="color:var(--muted2)">ปกติ</span>
+<span style="color:var(--muted)">40%</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden">
+<div style="height:100%;width:40%;background:#2f7d5b;border-radius:6px">
+</div>
+</div>
+</div>
+<div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px">
+<span style="color:var(--muted2)">ใกล้ถึงงบ</span>
+<span style="color:#c98a3c">80%</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden">
+<div style="height:100%;width:80%;background:#c98a3c;border-radius:6px">
+</div>
+</div>
+</div>
+<div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px">
+<span style="color:var(--muted2)">เกินงบ</span>
+<span style="color:#d9776a">100%</span>
+</div>
+<div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden">
+<div style="height:100%;width:100%;background:#d9776a;border-radius:6px">
+</div>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start">
+<span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#e8f1ec;color:#2f7d5b">จ่ายแล้ว</span>
+<span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#faf3e8;color:#c98a3c">อีก 3 วัน</span>
+<span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#fbecea;color:#d9776a">เลยกำหนด</span>
+<span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:var(--track);color:var(--muted)">รอดำเนินการ</span>
+<span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#eef7f1;color:#3f9d6b">รายรับ</span>
+</div>
+</div>
+<!-- list items + cards -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">รายการ & การ์ด</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:8px 16px">
+<div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--divider)">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">☕</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">Starbucks</div>
+<div style="font-size:12px;color:var(--muted)">อาหาร · วันนี้</div>
+</div>
+<div style="font-size:15px;font-weight:700">-฿145</div>
+</div>
+<div style="display:flex;align-items:center;gap:13px;padding:13px 0">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">💰</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">เงินเดือน</div>
+<div style="font-size:12px;color:var(--muted)">รายรับ · 25 มิ.ย.</div>
+</div>
+<div style="font-size:15px;font-weight:700;color:#3f9d6b">+฿70,000</div>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px">
+<div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:17px">🌐</div>
+<div style="flex:1">
+<div style="font-size:14.5px;font-weight:600">Internet</div>
+<div style="font-size:14px;font-weight:700;margin-top:2px">฿699</div>
+</div>
+<span style="font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:8px;background:#e8f1ec;color:#2f7d5b">อีก 3 วัน</span>
+</div>
+</div>
+<!-- states -->
+<div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">สถานะพิเศษ — ว่าง / สำเร็จ / Toast / Modal</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:50px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;display:flex;flex-direction:column;align-items:center;text-align:center">
+<div style="width:60px;height:60px;border-radius:18px;background:var(--track);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px">🧾</div>
+<div style="font-size:15px;font-weight:700">ยังไม่มีรายการ</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5">เริ่มบันทึกรายจ่ายแรกได้เลย</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;display:flex;flex-direction:column;align-items:center;text-align:center">
+<div style="width:60px;height:60px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+<div style="width:36px;height:36px;border-radius:50%;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">✓</div>
+</div>
+<div style="font-size:15px;font-weight:700">บันทึกแล้ว</div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5">ยังเหลืองบอาหารอีก ฿1,200</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;justify-content:center">
+<div style="background:#22251f;color:#fff;padding:12px 18px;border-radius:13px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px">
+<span style="color:#7fd0a3">✓</span>บันทึกรายการแล้ว</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 8px 24px -12px rgba(40,42,33,0.2)">
+<div style="font-size:14px;font-weight:700;margin-bottom:6px">ลบรายการนี้?</div>
+<div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">การลบไม่สามารถย้อนกลับได้</div>
+<div style="display:flex;gap:8px">
+<button style="flex:1;height:38px;border-radius:10px;background:var(--fill2);color:var(--muted2);font-size:13px;font-weight:600">ยกเลิก</button>
+<button style="flex:1;height:38px;border-radius:10px;background:#d9776a;color:#fff;font-size:13px;font-weight:600">ลบ</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+</div>

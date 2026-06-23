@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#2f7d5b">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#2f7d5b"/>
+    <rect x="470" y="250" width="260" height="300" rx="48" fill="#ffffff"/>
+    <text x="600" y="455" font-family="'Noto Sans Thai',sans-serif" font-size="180" font-weight="800" fill="#2f7d5b" text-anchor="middle">฿</text>
+  </svg>
+</template>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:'Noto Sans Thai',system-ui,sans-serif;background:#e6e3da;color:#22251f;
+    --bg:#f5f3ee;--card:#ffffff;--border:#ebe7de;--divider:#f1ede4;--fill:#f3f1ea;--fill2:#eceae2;--track:#eef0ec;--text:#22251f;--muted:#9a9c92;--muted2:#75776e}
+  .nl-phone{color:var(--text);transition:color .3s ease}
+  .nl-phone[data-theme="dark"]{--bg:#14161a;--card:#20242b;--border:#333842;--divider:#2c313a;--fill:#2a2f38;--fill2:#262b34;--track:#333842;--text:#f3f4ef;--muted:#9ea29a;--muted2:#c3c7bd}
+  .nl-scroll::-webkit-scrollbar{width:0;height:0}
+  .nl-scroll{scrollbar-width:none}
+  @keyframes nlSheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes nlFade{from{opacity:0}to{opacity:1}}
+  @keyframes nlSwap{from{transform:translateY(9px)}to{transform:translateY(0)}}
+  @keyframes nlToast{0%{transform:translate(-50%,20px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
+  @keyframes nlPop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+</style>
+</helmet>
+<div style="min-height:100vh;width:100%;background:#e6e3da;display:flex;flex-direction:column;align-items:stretch;padding:0 0 64px">
+
+  <!-- TOP CONTROL BAR -->
+  <div style="width:100%;position:sticky;top:0;z-index:50;background:rgba(244,242,236,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #dcd8cf;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div style="width:30px;height:30px;border-radius:9px;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px">฿</div>
+      <div style="line-height:1.1">
+        <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">เงินเหลือ</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:400">รู้ว่าเงินไปไหน เหลือใช้จริงเท่าไร</div>
+      </div>
+    </div>
+    <div style="display:flex;background:#e9e6dd;border:1px solid #dcd8cf;border-radius:11px;padding:3px;gap:2px">
+      <button onClick="{{ setMobile }}" style="{{ tabMobileStyle }}">Mobile App</button>
+      <button onClick="{{ setWeb }}" style="{{ tabWebStyle }}">Web Dashboard</button>
+      <button onClick="{{ setComponents }}" style="{{ tabCompStyle }}">Design System</button>
+    </div>
+  </div>
+
+  <!-- MOBILE STAGE -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+  <div style="width:100%;max-width:1040px;margin:0 auto;padding:34px 24px 0;display:flex;flex-direction:column;align-items:center;gap:22px">
+
+    <!-- screen chips -->
+    <div class="nl-scroll" style="max-width:100%;overflow-x:auto;display:flex;gap:8px;padding:2px">
+      <sc-for list="{{ screenTabs }}" as="t" hint-placeholder-count="8">
+        <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+
+    <!-- hero variant switch (only on home) -->
+    <sc-if value="{{ screenHome }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted2)">
+      <span>การ์ด “เงินที่ใช้ได้จริง”:</span>
+      <div style="display:flex;background:var(--card);border:1px solid #ddd9d0;border-radius:9px;padding:3px;gap:2px">
+        <button onClick="{{ setHero1 }}" style="{{ hero1Style }}">แบบ A</button>
+        <button onClick="{{ setHero2 }}" style="{{ hero2Style }}">แบบ B</button>
+        <button onClick="{{ setHero3 }}" style="{{ hero3Style }}">แบบ C</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- PHONE -->
+    <div style="position:relative;width:392px;height:812px;background:#1c1e1a;border-radius:54px;padding:11px;box-shadow:0 30px 60px -20px rgba(40,42,33,0.45),0 8px 20px rgba(40,42,33,0.12)">
+      <div class="nl-phone" data-theme="{{ themeAttr }}" style="position:relative;width:100%;height:100%;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column">
+
+        <!-- status bar -->
+        <div style="flex:none;height:50px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 8px;font-size:14px;font-weight:600;color:var(--text);z-index:5">
+          <span>9:41</span>
+          <div style="position:absolute;left:50%;top:9px;transform:translateX(-50%);width:108px;height:30px;background:#1c1e1a;border-radius:16px"></div>
+          <span style="display:flex;gap:6px;align-items:center">
+            <span style="display:flex;gap:2px;align-items:flex-end;height:11px"><i style="width:3px;height:5px;background:var(--text);border-radius:1px"></i><i style="width:3px;height:7px;background:var(--text);border-radius:1px"></i><i style="width:3px;height:9px;background:var(--text);border-radius:1px"></i><i style="width:3px;height:11px;background:var(--text);border-radius:1px"></i></span>
+            <span style="display:inline-block;width:15px;height:11px;border:1.5px solid var(--text);border-radius:3px;position:relative"><i style="position:absolute;inset:1.5px;width:8px;background:var(--text);border-radius:1px"></i></span>
+          </span>
+        </div>
+
+        <!-- SCROLL AREA -->
+        <div class="nl-scroll" style="flex:1;overflow-y:auto;position:relative">
+
+          <!-- ============ ONBOARDING ============ -->
+          <sc-if value="{{ screenOnboarding }}" hint-placeholder-val="{{ true }}">
+          <div style="min-height:100%;display:flex;flex-direction:column;padding:8px 26px 30px">
+            <!-- progress -->
+            <div style="display:flex;gap:6px;margin:6px 0 30px">
+              <sc-for list="{{ onbDots }}" as="d" hint-placeholder-count="4">
+                <div style="{{ d.style }}"></div>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ onbIsStep1 }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 1 จาก 4</div>
+              <h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">เงินเดือนหรือรายได้หลัก<br>เข้าวันไหน?</h1>
+              <p style="font-size:14px;color:var(--muted);margin:0 0 26px">เลือกวันที่ใกล้เคียงก็ได้ ปรับทีหลังได้เสมอ</p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+                <sc-for list="{{ payDays }}" as="d" hint-placeholder-count="6">
+                  <button onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ onbIsStep2 }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 2 จาก 4</div>
+              <h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">รายได้ต่อเดือน<br>ประมาณเท่าไร?</h1>
+              <p style="font-size:14px;color:var(--muted);margin:0 0 30px">ใส่โดยประมาณก็ได้ แก้ทีหลังได้เสมอ</p>
+              <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;padding:24px 0;border-bottom:2px solid #2f7d5b">
+                <span style="font-size:34px;color:#bdbfb5;font-weight:600">฿</span>
+                <span style="font-size:52px;font-weight:700;letter-spacing:-0.02em">70,000</span>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center">
+                <span style="font-size:13px;padding:8px 14px;background:var(--card);border:1px solid #e6e2d9;border-radius:20px;color:var(--muted2)">฿30,000</span>
+                <span style="font-size:13px;padding:8px 14px;background:#e8f1ec;border:1px solid #cfe3d8;border-radius:20px;color:#2f7d5b;font-weight:600">฿70,000</span>
+                <span style="font-size:13px;padding:8px 14px;background:var(--card);border:1px solid #e6e2d9;border-radius:20px;color:var(--muted2)">฿120,000</span>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ onbIsStep3 }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 3 จาก 4</div>
+              <h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">มีค่าใช้จ่ายอะไร<br>ที่ต้องจ่ายทุกเดือนไหม?</h1>
+              <p style="font-size:14px;color:var(--muted);margin:0 0 22px">เลือกได้หลายอย่าง ไม่มีก็ข้ามได้</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <sc-for list="{{ recurringOptions }}" as="o" hint-placeholder-count="7">
+                  <button onClick="{{ o.onClick }}" style="{{ o.style }}">
+                    <span style="font-size:14px;font-weight:500">{{ o.label }}</span>
+                    <span style="{{ o.checkStyle }}">✓</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ onbIsStep4 }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;color:#2f7d5b;font-weight:600;margin-bottom:10px">ขั้นที่ 4 จาก 4</div>
+              <h1 style="font-size:27px;font-weight:700;line-height:1.3;margin:0 0 8px;letter-spacing:-0.01em">ตอนนี้อยากให้เงิน<br>ช่วยเรื่องไหนมากที่สุด?</h1>
+              <p style="font-size:14px;color:var(--muted);margin:0 0 22px">เลือก 1 ข้อ เปลี่ยนได้ทุกเมื่อ</p>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ goalOptions }}" as="o" hint-placeholder-count="5">
+                  <button onClick="{{ o.onClick }}" style="{{ o.style }}">
+                    <span style="{{ o.dotStyle }}"></span>
+                    <span style="font-size:15px;font-weight:500">{{ o.label }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ onbIsDone }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-bottom:40px">
+              <div style="width:88px;height:88px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;margin-bottom:26px;animation:nlPop .4s ease">
+                <div style="width:54px;height:54px;border-radius:50%;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px">✓</div>
+              </div>
+              <h1 style="font-size:26px;font-weight:700;line-height:1.35;margin:0 0 12px">พร้อมแล้ว</h1>
+              <p style="font-size:15px;color:var(--muted2);line-height:1.6;margin:0;max-width:280px">เราจะช่วยดูว่าเงินของคุณไปไหน<br>และเหลือใช้จริงเท่าไรในแต่ละเดือน</p>
+            </div>
+            </sc-if>
+
+            <div style="flex:1"></div>
+            <div style="display:flex;gap:12px;margin-top:30px">
+              <sc-if value="{{ onbCanBack }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ onbBack }}" style="flex:none;width:54px;height:54px;border-radius:16px;background:var(--card);border:1px solid #e6e2d9;font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+              </sc-if>
+              <button onClick="{{ onbNext }}" style="flex:1;height:54px;border-radius:16px;background:#2f7d5b;color:#fff;font-size:16px;font-weight:600;box-shadow:0 6px 16px -4px rgba(47,125,91,0.5)">{{ onbCtaLabel }}</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============ HOME ============ -->
+          <sc-if value="{{ screenHome }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <!-- header -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 20px">
+              <div>
+                <div style="font-size:21px;font-weight:700;letter-spacing:-0.01em">สวัสดีครับ, บอล</div>
+                <div style="font-size:13px;color:var(--muted);margin-top:2px">ภาพรวมเดือนมิถุนายน</div>
+              </div>
+              <div style="width:42px;height:42px;border-radius:50%;background:#e8f1ec;border:1px solid #d6e6dd;display:flex;align-items:center;justify-content:center;color:#2f7d5b;font-weight:600;font-size:15px">บ</div>
+            </div>
+
+            <!-- HERO VARIANT A -->
+            <sc-if value="{{ heroA }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 1px 2px rgba(40,42,33,0.04),0 8px 24px -12px rgba(40,42,33,0.1)">
+              <div style="display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;font-weight:500"><span style="width:7px;height:7px;border-radius:50%;background:#2f7d5b;display:inline-block"></span>เงินที่ใช้ได้จริง</div>
+              <div style="font-size:46px;font-weight:800;letter-spacing:-0.03em;margin:8px 0 4px;color:var(--text)">฿12,800</div>
+              <div style="font-size:13px;color:var(--muted)">หลังหักบิลและค่าใช้จ่ายที่รอแล้ว</div>
+              <div style="height:8px;border-radius:6px;background:var(--track);margin:18px 0 0;overflow:hidden;display:flex">
+                <div style="width:74%;background:#cde0d5"></div>
+                <div style="width:26%;background:#2f7d5b"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11.5px;color:var(--muted)">
+                <span>กันไว้แล้ว ฿37,200</span><span style="color:#2f7d5b;font-weight:600">ใช้ได้ ฿12,800</span>
+              </div>
+              <button onClick="{{ openSheet }}" style="margin-top:16px;width:100%;height:42px;border-radius:12px;background:var(--fill);color:#3a4d42;font-size:13.5px;font-weight:600">ดูรายละเอียด</button>
+            </div>
+            </sc-if>
+
+            <!-- HERO VARIANT B -->
+            <sc-if value="{{ heroB }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#2f7d5b;border-radius:20px;padding:24px;box-shadow:0 10px 30px -10px rgba(47,125,91,0.5);color:#fff;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+              <div style="font-size:13px;font-weight:500;opacity:0.85">เงินที่ใช้ได้จริง</div>
+              <div style="font-size:48px;font-weight:800;letter-spacing:-0.03em;margin:6px 0 4px">฿12,800</div>
+              <div style="font-size:13px;opacity:0.8">หลังหักบิลและค่าใช้จ่ายที่รอแล้ว</div>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <div style="flex:1;background:rgba(255,255,255,0.12);border-radius:13px;padding:12px 14px">
+                  <div style="font-size:11px;opacity:0.8">เงินทั้งหมด</div>
+                  <div style="font-size:18px;font-weight:700;margin-top:2px">฿50,000</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.12);border-radius:13px;padding:12px 14px">
+                  <div style="font-size:11px;opacity:0.8">ต้องกันไว้</div>
+                  <div style="font-size:18px;font-weight:700;margin-top:2px">฿37,200</div>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- HERO VARIANT C -->
+            <sc-if value="{{ heroC }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 1px 2px rgba(40,42,33,0.04),0 8px 24px -12px rgba(40,42,33,0.1)">
+              <div style="font-size:13px;color:var(--muted);font-weight:500;margin-bottom:14px">เงินที่ใช้ได้จริงเดือนนี้</div>
+              <div style="display:flex;align-items:flex-end;gap:18px">
+                <div style="position:relative;width:96px;height:96px;flex:none">
+                  <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(#2f7d5b 0% 26%,var(--track) 26% 100%)"></div>
+                  <div style="position:absolute;inset:11px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:20px;font-weight:800;color:#2f7d5b">26%</span><span style="font-size:9px;color:var(--muted)">ของเงินทั้งหมด</span></div>
+                </div>
+                <div>
+                  <div style="font-size:40px;font-weight:800;letter-spacing:-0.03em;line-height:1">฿12,800</div>
+                  <div style="font-size:12.5px;color:var(--muted);margin-top:6px">จากเงินทั้งหมด ฿50,000<br>กันไว้สำหรับบิล &amp; เป้าหมาย ฿37,200</div>
+                </div>
+              </div>
+              <button onClick="{{ openSheet }}" style="margin-top:18px;width:100%;height:42px;border-radius:12px;background:var(--fill);color:#3a4d42;font-size:13.5px;font-weight:600">ดูรายละเอียด</button>
+            </div>
+            </sc-if>
+
+            <!-- secondary cards -->
+            <div style="display:flex;gap:12px;margin-top:14px">
+              <div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px">
+                <div style="font-size:12px;color:var(--muted)">เงินในบัญชีทั้งหมด</div>
+                <div style="font-size:21px;font-weight:700;margin-top:5px">฿50,000</div>
+              </div>
+              <div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px">
+                <div style="font-size:12px;color:var(--muted)">ต้องกันไว้</div>
+                <div style="font-size:21px;font-weight:700;margin-top:5px;color:#c98a3c">฿37,200</div>
+              </div>
+            </div>
+
+            <!-- this month -->
+            <div style="margin:24px 0 12px;font-size:15px;font-weight:700">เดือนนี้เป็นอย่างไร</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px">
+              <div style="display:flex;justify-content:space-between;gap:14px">
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:3px;background:#3f9d6b"></span>เงินเข้า</div>
+                  <div style="font-size:20px;font-weight:700;color:#3f9d6b;margin-top:4px">฿70,000</div>
+                </div>
+                <div style="width:1px;background:#eee9e0"></div>
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:3px;background:#d9776a"></span>เงินออก</div>
+                  <div style="font-size:20px;font-weight:700;color:#d9776a;margin-top:4px">฿41,800</div>
+                </div>
+              </div>
+              <div style="margin-top:14px;height:10px;border-radius:6px;overflow:hidden;display:flex;gap:3px">
+                <div style="flex:70000;background:#dcefe2;border-radius:6px"></div>
+                <div style="flex:41800;background:#f6dcd6;border-radius:6px"></div>
+              </div>
+              <div style="margin-top:12px;font-size:12.5px;color:#3f9d6b;background:#eef7f1;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:7px">↓ ใช้จ่ายน้อยกว่าเดือนก่อน 8%</div>
+            </div>
+
+            <!-- upcoming -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px">
+              <div style="font-size:15px;font-weight:700">ต้องจ่ายเร็ว ๆ นี้</div>
+              <button onClick="{{ goBills }}" style="font-size:13px;color:#2f7d5b;font-weight:600">ดูทั้งหมด</button>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+              <sc-for list="{{ upcomingBills }}" as="b" hint-placeholder-count="3">
+                <div style="{{ b.rowStyle }}">
+                  <div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ b.icon }}</div>
+                  <div style="flex:1">
+                    <div style="font-size:14.5px;font-weight:600">{{ b.name }}</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:1px">{{ b.due }}</div>
+                  </div>
+                  <div style="font-size:15px;font-weight:700">{{ b.amount }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <!-- watch budgets -->
+            <div style="margin:24px 0 12px;font-size:15px;font-weight:700">งบที่ต้องระวัง</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ watchBudgets }}" as="g" hint-placeholder-count="2">
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <span style="font-size:14.5px;font-weight:600">{{ g.name }}</span>
+                    <span style="{{ g.tagStyle }}">{{ g.tag }}</span>
+                  </div>
+                  <div style="height:9px;border-radius:6px;background:var(--track);margin:12px 0 8px;overflow:hidden">
+                    <div style="{{ g.barStyle }}"></div>
+                  </div>
+                  <div style="font-size:12.5px;color:var(--muted)">{{ g.detail }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <!-- recent -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px">
+              <div style="font-size:15px;font-weight:700">รายการล่าสุด</div>
+              <button onClick="{{ goTxns }}" style="font-size:13px;color:#2f7d5b;font-weight:600">ดูทั้งหมด</button>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+              <sc-for list="{{ recentTxns }}" as="t" hint-placeholder-count="3">
+                <div style="{{ t.rowStyle }}">
+                  <div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div>
+                  <div style="flex:1">
+                    <div style="font-size:14.5px;font-weight:600">{{ t.name }}</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:1px">{{ t.meta }}</div>
+                  </div>
+                  <div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============ ADD TRANSACTION ============ -->
+          <sc-if value="{{ screenAdd }}" hint-placeholder-val="{{ true }}">
+          <div style="min-height:100%;display:flex;flex-direction:column">
+            <sc-if value="{{ addSuccess }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 30px">
+              <div style="width:84px;height:84px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:nlPop .4s ease">
+                <div style="width:50px;height:50px;border-radius:50%;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px">✓</div>
+              </div>
+              <div style="font-size:24px;font-weight:700;margin-bottom:10px">บันทึกแล้ว</div>
+              <div style="font-size:15px;color:var(--muted2);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;line-height:1.5">วันนี้คุณยังเหลืองบอาหารอีก<br><span style="color:#2f7d5b;font-weight:700;font-size:18px">฿1,200</span></div>
+              <button onClick="{{ goHome }}" style="margin-top:28px;height:50px;padding:0 36px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600">เสร็จสิ้น</button>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ addForm }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:none;padding:8px 20px 0;display:flex;align-items:center;justify-content:space-between">
+              <button onClick="{{ goHome }}" style="font-size:15px;color:var(--muted2)">ยกเลิก</button>
+              <div style="font-size:16px;font-weight:700">เพิ่มรายการ</div>
+              <div style="width:44px"></div>
+            </div>
+            <!-- segment -->
+            <div style="flex:none;padding:18px 20px 0">
+              <div style="display:flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px">
+                <button onClick="{{ setExpense }}" style="{{ segExpenseStyle }}">รายจ่าย</button>
+                <button onClick="{{ setIncome }}" style="{{ segIncomeStyle }}">รายรับ</button>
+              </div>
+            </div>
+            <!-- amount -->
+            <div style="flex:none;display:flex;align-items:baseline;justify-content:center;gap:8px;padding:34px 0 28px">
+              <span style="font-size:30px;color:#c4c6bc;font-weight:600">฿</span>
+              <span style="{{ amountStyle }}">{{ addAmountDisplay }}</span>
+            </div>
+            <!-- categories -->
+            <div class="nl-scroll" style="flex:none;padding:0 16px 16px;display:flex;gap:8px;overflow-x:auto">
+              <sc-for list="{{ catChips }}" as="c" hint-placeholder-count="8">
+                <button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+              </sc-for>
+            </div>
+            <!-- account + optional -->
+            <div style="flex:none;padding:0 20px;display:flex;flex-direction:column;gap:9px">
+              <button style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px">
+                <span style="font-size:13px;color:var(--muted)">จ่ายจาก</span>
+                <span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px">บัญชีหลัก<span style="color:#c4c6bc">›</span></span>
+              </button>
+              <div style="display:flex;gap:9px">
+                <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;font-size:13px;color:var(--muted2)">📅 วันนี้</button>
+                <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;font-size:13px;color:var(--muted2)">📝 โน้ต</button>
+                <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;font-size:13px;color:var(--muted2)">📎 ใบเสร็จ</button>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <!-- keypad -->
+            <div style="flex:none;background:var(--fill2);padding:10px 8px 4px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+              <sc-for list="{{ keypad }}" as="k" hint-placeholder-count="12">
+                <button onClick="{{ k.onClick }}" style="height:50px;border-radius:11px;background:var(--card);font-size:22px;font-weight:600;color:var(--text);box-shadow:0 1px 1px rgba(40,42,33,0.05)">{{ k.label }}</button>
+              </sc-for>
+            </div>
+            <div style="flex:none;padding:10px 16px 18px;background:var(--fill2)">
+              <button onClick="{{ saveTxn }}" style="width:100%;height:54px;border-radius:15px;background:#2f7d5b;color:#fff;font-size:16px;font-weight:600;box-shadow:0 6px 16px -4px rgba(47,125,91,0.5)">บันทึกรายการ</button>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+
+          <!-- ============ TRANSACTIONS ============ -->
+          <sc-if value="{{ screenTxns }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px">
+              <div style="font-size:21px;font-weight:700">รายการ</div>
+              <div style="display:flex;gap:8px">
+                <button style="width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px">⌕</button>
+                <button onClick="{{ toggleEmpty }}" style="width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px">⊜</button>
+              </div>
+            </div>
+            <div class="nl-scroll" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:18px;padding-bottom:2px">
+              <sc-for list="{{ txnFilters }}" as="f" hint-placeholder-count="4">
+                <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ txnEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 30px">
+              <div style="width:76px;height:76px;border-radius:24px;background:var(--track);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px">🧾</div>
+              <div style="font-size:17px;font-weight:700;margin-bottom:8px">ยังไม่มีรายการ</div>
+              <div style="font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:24px">เริ่มบันทึกรายจ่ายแรกของคุณได้เลย<br>ใช้เวลาไม่ถึงนาที</div>
+              <button onClick="{{ goAdd }}" style="height:48px;padding:0 26px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600">+ เพิ่มรายการแรก</button>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ txnHasItems }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <sc-for list="{{ txnGroups }}" as="grp" hint-placeholder-count="3">
+                <div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;padding:0 2px">
+                    <span style="font-size:13px;font-weight:600;color:var(--muted2)">{{ grp.label }}</span>
+                    <span style="font-size:12px;color:#aeb0a6">{{ grp.sum }}</span>
+                  </div>
+                  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+                    <sc-for list="{{ grp.items }}" as="t" hint-placeholder-count="2">
+                      <div style="{{ t.rowStyle }}">
+                        <div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div>
+                        <div style="flex:1">
+                          <div style="font-size:14.5px;font-weight:600">{{ t.name }}</div>
+                          <div style="font-size:12px;color:var(--muted);margin-top:1px">{{ t.cat }}</div>
+                        </div>
+                        <div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="text-align:center;font-size:12px;color:#bdbfb5;padding:4px">ปัดซ้ายที่รายการเพื่อแก้ไขหรือลบ</div>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+
+          <!-- ============ PLAN ============ -->
+          <sc-if value="{{ screenPlan }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="margin:8px 0 18px">
+              <div style="font-size:21px;font-weight:700">แผนเงินเดือนนี้</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:2px">มิถุนายน · เหลืออีก 20 วันก่อนเงินเดือนออก</div>
+            </div>
+
+            <div style="background:#2f7d5b;border-radius:20px;padding:22px;color:#fff;box-shadow:0 10px 28px -12px rgba(47,125,91,0.5)">
+              <div style="font-size:13px;opacity:0.85">เดือนนี้คุณยังใช้ได้อีก</div>
+              <div style="font-size:44px;font-weight:800;letter-spacing:-0.03em;margin-top:4px">฿12,800</div>
+            </div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-top:12px;display:flex;align-items:center;gap:16px">
+              <div style="width:52px;height:52px;border-radius:15px;background:#e8f1ec;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;color:#2f7d5b"><span style="font-size:18px;font-weight:800;line-height:1">20</span><span style="font-size:9px">วัน</span></div>
+              <div>
+                <div style="font-size:13.5px;color:var(--muted)">ถ้าอยากให้เงินพอถึงวันเงินเดือนออก</div>
+                <div style="font-size:16px;font-weight:700;margin-top:3px">ใช้ได้ประมาณวันละ <span style="color:#2f7d5b">฿640</span></div>
+              </div>
+            </div>
+
+            <div style="margin:24px 0 12px;font-size:15px;font-weight:700">งบแต่ละหมวด</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ planCats }}" as="c" hint-placeholder-count="5">
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                    <div style="display:flex;align-items:center;gap:9px"><span style="font-size:17px">{{ c.icon }}</span><span style="font-size:14.5px;font-weight:600">{{ c.name }}</span></div>
+                    <sc-if value="{{ c.warn }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;font-weight:600;color:#c98a3c;background:#faf3e8;padding:3px 9px;border-radius:7px">ใกล้ถึงงบ</span></sc-if>
+                  </div>
+                  <div style="height:9px;border-radius:6px;background:var(--track);margin:10px 0 8px;overflow:hidden"><div style="{{ c.barStyle }}"></div></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--muted)">ใช้ไป {{ c.used }} จาก {{ c.total }}</span><span style="font-weight:600;color:{{ c.leftColor }}">เหลือ {{ c.left }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:16px;padding:18px;margin-top:18px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2f7d5b;margin-bottom:8px"><span style="width:22px;height:22px;border-radius:7px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">✦</span>คำแนะนำเล็ก ๆ</div>
+              <div style="font-size:14px;line-height:1.6;color:#3a4d42">เดือนนี้ค่าอาหารสูงกว่าปกติเล็กน้อย ถ้าลดลงวันละประมาณ <b>฿100</b> ใน 7 วันที่เหลือ คุณจะกลับมาอยู่ในแผนได้พอดี ไม่ต้องกังวลครับ</div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============ BILLS ============ -->
+          <sc-if value="{{ screenBills }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="margin:8px 0 6px;font-size:21px;font-weight:700">บิลที่ต้องจ่าย</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:22px">เดือนนี้มี 4 บิล รวม ฿9,409</div>
+            <div style="position:relative;padding-left:8px">
+              <div style="position:absolute;left:23px;top:14px;bottom:14px;width:2px;background:#ece8df"></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <sc-for list="{{ billsTimeline }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;gap:16px;align-items:flex-start;position:relative">
+                    <div style="flex:none;width:34px;display:flex;flex-direction:column;align-items:center;z-index:1">
+                      <div style="{{ b.dotStyle }}"></div>
+                      <div style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center;font-weight:600">{{ b.date }}</div>
+                    </div>
+                    <div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:15px;padding:14px 16px;display:flex;align-items:center;gap:12px;{{ b.cardExtra }}">
+                      <div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:17px">{{ b.icon }}</div>
+                      <div style="flex:1">
+                        <div style="font-size:14.5px;font-weight:600">{{ b.name }}</div>
+                        <div style="font-size:14px;font-weight:700;margin-top:2px">{{ b.amount }}</div>
+                      </div>
+                      <span style="{{ b.statusStyle }}">{{ b.status }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <button style="margin-top:22px;width:100%;height:50px;border-radius:14px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:15px;font-weight:600">+ เพิ่มบิลประจำ</button>
+          </div>
+          </sc-if>
+
+          <!-- ============ ACCOUNTS ============ -->
+          <sc-if value="{{ screenAccounts }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="margin:8px 0 18px;font-size:21px;font-weight:700">บัญชีของฉัน</div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:18px">
+              <div style="font-size:13px;color:var(--muted)">เงินที่มีรวมทั้งหมด</div>
+              <div style="font-size:34px;font-weight:800;letter-spacing:-0.02em;margin-top:4px">฿32,000</div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">เงินที่มี</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px">
+              <sc-for list="{{ assetRows }}" as="a" hint-placeholder-count="3">
+                <div style="{{ a.rowStyle }}">
+                  <div style="width:40px;height:40px;border-radius:12px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:17px">{{ a.icon }}</div>
+                  <div style="flex:1;font-size:14.5px;font-weight:600">{{ a.name }}</div>
+                  <div style="font-size:15px;font-weight:700">{{ a.amount }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ยอดที่ต้องจ่าย</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+              <sc-for list="{{ debtRows }}" as="d" hint-placeholder-count="2">
+                <div style="{{ d.rowStyle }}">
+                  <div style="width:40px;height:40px;border-radius:12px;background:#fbecea;display:flex;align-items:center;justify-content:center;font-size:17px">{{ d.icon }}</div>
+                  <div style="flex:1"><div style="font-size:14.5px;font-weight:600">{{ d.name }}</div><div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ d.sub }}</div></div>
+                  <div style="font-size:15px;font-weight:700;color:#d9776a">{{ d.amount }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============ GOALS ============ -->
+          <sc-if value="{{ screenGoals }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="margin:8px 0 18px;font-size:21px;font-weight:700">เป้าหมายของฉัน</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ goalCards }}" as="g" hint-placeholder-count="2">
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 1px 2px rgba(40,42,33,0.04),0 8px 22px -14px rgba(40,42,33,0.12)">
+                  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                    <div style="width:46px;height:46px;border-radius:14px;background:{{ g.iconBg }};display:flex;align-items:center;justify-content:center;font-size:22px">{{ g.icon }}</div>
+                    <div style="flex:1"><div style="font-size:16px;font-weight:700">{{ g.name }}</div><div style="font-size:12.5px;color:var(--muted);margin-top:1px">เป้าหมาย {{ g.target }}</div></div>
+                    <div style="font-size:20px;font-weight:800;color:#2f7d5b">{{ g.pct }}</div>
+                  </div>
+                  <div style="height:11px;border-radius:7px;background:var(--track);overflow:hidden"><div style="{{ g.barStyle }}"></div></div>
+                  <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px"><span style="color:var(--muted2)">เก็บแล้ว <b style="color:var(--text)">{{ g.saved }}</b></span><span style="color:var(--muted)">{{ g.remaining }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <button style="margin-top:16px;width:100%;height:50px;border-radius:14px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:15px;font-weight:600">+ สร้างเป้าหมาย</button>
+          </div>
+          </sc-if>
+
+          <!-- ============ MORE ============ -->
+          <sc-if value="{{ screenMore }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="margin:8px 0 18px;font-size:21px;font-weight:700">เพิ่มเติม</div>
+
+            <!-- profile -->
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;margin-bottom:18px">
+              <div style="width:52px;height:52px;border-radius:50%;background:#e8f1ec;border:1px solid #d6e6dd;display:flex;align-items:center;justify-content:center;color:#2f7d5b;font-weight:700;font-size:19px">บ</div>
+              <div style="flex:1"><div style="font-size:16px;font-weight:700">บอล</div><div style="font-size:12.5px;color:var(--muted);margin-top:1px">แตะเพื่อแก้ไขโปรไฟล์</div></div>
+              <span style="font-size:18px;color:#c4c6bc">›</span>
+            </div>
+
+            <!-- mode toggle -->
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:18px">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:4px">โหมดการใช้งาน</div>
+              <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">เริ่มแบบง่ายก่อน เปิดฟีเจอร์ละเอียดเมื่อพร้อม</div>
+              <div style="display:flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px">
+                <button onClick="{{ setBeginner }}" style="{{ modeBeginnerStyle }}">เริ่มต้นใช้ง่าย</button>
+                <button onClick="{{ setAdvanced }}" style="{{ modeAdvancedStyle }}">ขั้นสูง</button>
+              </div>
+            </div>
+
+            <!-- main menu -->
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:18px">
+              <sc-for list="{{ moreMain }}" as="m" hint-placeholder-count="4">
+                <button onClick="{{ m.onClick }}" style="{{ m.rowStyle }}">
+                  <div style="width:40px;height:40px;border-radius:12px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:18px">{{ m.icon }}</div>
+                  <div style="flex:1"><div style="font-size:14.5px;font-weight:600">{{ m.label }}</div><div style="font-size:12px;color:var(--muted);margin-top:1px">{{ m.sub }}</div></div>
+                  <span style="font-size:17px;color:#c4c6bc">›</span>
+                </button>
+              </sc-for>
+            </div>
+
+            <!-- advanced features (hidden until advanced mode) -->
+            <sc-if value="{{ isAdvanced }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px;display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#2f7d5b"></span>ฟีเจอร์ขั้นสูง</div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+                <sc-for list="{{ moreAdvanced }}" as="m" hint-placeholder-count="4">
+                  <div style="{{ m.rowStyle }}">
+                    <div style="width:40px;height:40px;border-radius:12px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:18px">{{ m.icon }}</div>
+                    <div style="flex:1"><div style="font-size:14.5px;font-weight:600">{{ m.label }}</div><div style="font-size:12px;color:var(--muted);margin-top:1px">{{ m.sub }}</div></div>
+                    <span style="font-size:17px;color:#c4c6bc">›</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ isBeginner }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start">
+              <span style="width:26px;height:26px;border-radius:8px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none">✦</span>
+              <div style="font-size:13px;color:#3a4d42;line-height:1.55">ตอนนี้คุณใช้โหมดเริ่มต้น เรียบง่าย ไม่ซับซ้อน เมื่อพร้อมอยากดูรายงานละเอียดหรือส่งออกข้อมูล เปิด “ขั้นสูง” ได้ตลอดครับ</div>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+
+          <!-- ============ SETTINGS ============ -->
+          <sc-if value="{{ screenSettings }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 20px 120px;animation:nlSwap .26s ease">
+            <div style="display:flex;align-items:center;gap:12px;margin:6px 0 20px">
+              <button onClick="{{ goMore }}" style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2);display:flex;align-items:center;justify-content:center">‹</button>
+              <div style="font-size:21px;font-weight:700;white-space:nowrap">ตั้งค่า</div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">บัญชีและโปรไฟล์</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><span style="font-size:18px;width:24px;text-align:center">👤</span><span style="flex:1;font-size:14.5px;font-weight:500">ข้อมูลส่วนตัว</span><span style="font-size:17px;color:#c4c6bc">›</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><span style="font-size:18px;width:24px;text-align:center">💳</span><span style="flex:1;font-size:14.5px;font-weight:500">วันเงินเดือนออก</span><span style="font-size:13.5px;color:var(--muted)">ทุกวันที่ 25 ›</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px"><span style="font-size:18px;width:24px;text-align:center">🎯</span><span style="flex:1;font-size:14.5px;font-weight:500">เป้าหมายหลัก</span><span style="font-size:13.5px;color:var(--muted)">มีเงินเหลือปลายเดือน ›</span></div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">การแจ้งเตือน</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><div><div style="font-size:14.5px;font-weight:500">เตือนก่อนบิลถึงกำหนด</div><div style="font-size:12px;color:var(--muted);margin-top:1px">ล่วงหน้า 3 วัน</div></div><div style="flex:1"></div><button onClick="{{ swBillsClick }}" style="{{ swBillsTrack }}"><span style="{{ swBillsKnob }}"></span></button></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><div><div style="font-size:14.5px;font-weight:500">เตือนเมื่อใกล้เกินงบ</div><div style="font-size:12px;color:var(--muted);margin-top:1px">เมื่อใช้ถึง 80% ของงบ</div></div><div style="flex:1"></div><button onClick="{{ swBudgetClick }}" style="{{ swBudgetTrack }}"><span style="{{ swBudgetKnob }}"></span></button></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px"><div><div style="font-size:14.5px;font-weight:500">สรุปประจำสัปดาห์</div><div style="font-size:12px;color:var(--muted);margin-top:1px">ทุกเช้าวันจันทร์</div></div><div style="flex:1"></div><button onClick="{{ swWeeklyClick }}" style="{{ swWeeklyTrack }}"><span style="{{ swWeeklyKnob }}"></span></button></div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ความปลอดภัยและการแสดงผล</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><span style="font-size:18px;width:24px;text-align:center">🔒</span><div><div style="font-size:14.5px;font-weight:500">ล็อกด้วยสแกนใบหน้า</div><div style="font-size:12px;color:var(--muted);margin-top:1px">เปิดแอปต้องยืนยันตัวตน</div></div><div style="flex:1"></div><button onClick="{{ swBiometricClick }}" style="{{ swBiometricTrack }}"><span style="{{ swBiometricKnob }}"></span></button></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><span style="font-size:18px;width:24px;text-align:center">🙈</span><div><div style="font-size:14.5px;font-weight:500">ซ่อนจำนวนเงิน</div><div style="font-size:12px;color:var(--muted);margin-top:1px">แสดงเป็น ••• จนกว่าจะแตะ</div></div><div style="flex:1"></div><button onClick="{{ swHideAmountsClick }}" style="{{ swHideAmountsTrack }}"><span style="{{ swHideAmountsKnob }}"></span></button></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px"><span style="font-size:18px;width:24px;text-align:center">🌙</span><div><div style="font-size:14.5px;font-weight:500">โหมดมืด</div><div style="font-size:12px;color:var(--muted);margin-top:1px">ถนอมสายตาตอนกลางคืน</div></div><div style="flex:1"></div><button onClick="{{ swDarkClick }}" style="{{ swDarkTrack }}"><span style="{{ swDarkKnob }}"></span></button></div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--muted2);margin:0 0 10px 2px">ทั่วไป</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px">
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><span style="font-size:18px;width:24px;text-align:center">🌐</span><span style="flex:1;font-size:14.5px;font-weight:500">ภาษา</span><span style="font-size:13.5px;color:var(--muted)">ไทย ›</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--divider)"><span style="font-size:18px;width:24px;text-align:center">💱</span><span style="flex:1;font-size:14.5px;font-weight:500">สกุลเงิน</span><span style="font-size:13.5px;color:var(--muted)">บาท (฿) ›</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:15px 16px"><span style="font-size:18px;width:24px;text-align:center">💬</span><span style="flex:1;font-size:14.5px;font-weight:500">ช่วยเหลือและติดต่อเรา</span><span style="font-size:17px;color:#c4c6bc">›</span></div>
+            </div>
+
+            <button style="width:100%;height:50px;border-radius:14px;background:var(--card);border:1px solid #f0dad5;color:#d9776a;font-size:15px;font-weight:600">ออกจากระบบ</button>
+            <div style="text-align:center;font-size:12px;color:#bdbfb5;margin-top:18px">เงินเหลือ · เวอร์ชัน 1.0.0</div>
+          </div>
+          </sc-if>
+
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:none;position:relative;background:var(--card);border-top:1px solid #ece8df;padding:8px 14px 26px;display:flex;align-items:flex-end;justify-content:space-between">
+          <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+            <button onClick="{{ n.onClick }}" style="{{ n.style }}">
+              <span style="font-size:20px;line-height:1">{{ n.icon }}</span>
+              <span style="font-size:10.5px;font-weight:500">{{ n.label }}</span>
+            </button>
+          </sc-for>
+          <button onClick="{{ goAdd }}" style="position:absolute;left:50%;top:-18px;transform:translateX(-50%);width:58px;height:58px;border-radius:20px;background:#2f7d5b;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 18px -4px rgba(47,125,91,0.55);font-size:26px;font-weight:300">+</button>
+        </div>
+        </sc-if>
+
+        <!-- BOTTOM SHEET -->
+        <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(28,30,26,0.4);z-index:30;animation:nlFade .2s ease;display:flex;align-items:flex-end">
+          <div onClick="{{ stop }}" style="width:100%;background:var(--bg);border-radius:26px 26px 44px 44px;padding:10px 22px 30px;animation:nlSheetUp .3s cubic-bezier(.2,.8,.2,1)">
+            <div style="width:40px;height:4px;border-radius:3px;background:#d6d3c9;margin:0 auto 18px"></div>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px"><span style="width:26px;height:26px;border-radius:8px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:14px">✦</span><span style="font-size:17px;font-weight:700">สรุปสั้น ๆ ของเดือนนี้</span></div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:18px">เราดูให้แล้ว ไม่มีอะไรต้องกังวล</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--muted2)">เดือนนี้คุณใช้เงินไป</span><span style="font-size:16px;font-weight:700">฿41,800</span></div>
+              <div style="background:#faf3e8;border:1px solid #f0e3cd;border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:#9a7b40">ค่าอาหารสูงกว่าปกติ</span><span style="font-size:16px;font-weight:700;color:#c98a3c">+฿1,100</span></div>
+              <div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:#2f7d5b">ยังมีเงินใช้ได้จริง</span><span style="font-size:16px;font-weight:700;color:#2f7d5b">฿12,800</span></div>
+            </div>
+            <div style="background:var(--card);border:1px dashed #cfe3d8;border-radius:14px;padding:16px;margin-top:14px">
+              <div style="font-size:14px;font-weight:600;line-height:1.5">ลองตั้งเป้าลดค่าอาหารวันละ ฿100 ในสัปดาห์นี้</div>
+              <div style="font-size:12.5px;color:var(--muted);margin-top:4px">ทำได้สบาย ๆ แล้วคุณจะกลับมาอยู่ในแผนพอดี</div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:18px">
+              <button onClick="{{ closeSheet }}" style="flex:none;padding:0 22px;height:50px;border-radius:14px;background:var(--fill2);color:var(--muted2);font-size:15px;font-weight:600">ไว้ก่อน</button>
+              <button onClick="{{ closeSheet }}" style="flex:1;height:50px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600">ดูรายละเอียด</button>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- TOAST -->
+        <sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;left:50%;bottom:108px;transform:translateX(-50%);background:#22251f;color:#fff;padding:12px 18px;border-radius:13px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px;z-index:40;animation:nlToast .3s ease;white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,0.25)"><span style="color:#7fd0a3">✓</span>{{ toastMsg }}</div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- WEB + COMPONENTS injected later -->
+  <sc-if value="{{ isWeb }}" hint-placeholder-val="{{ true }}">
+  <div style="width:1208px;margin:34px auto 0;padding:0 24px">
+    <!-- browser chrome -->
+    <div style="background:#1c1e1a;border-radius:16px 16px 0 0;padding:11px 16px;display:flex;align-items:center;gap:14px">
+      <div style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:50%;background:#ff5f57"></span><span style="width:11px;height:11px;border-radius:50%;background:#febc2e"></span><span style="width:11px;height:11px;border-radius:50%;background:#28c840"></span></div>
+      <div style="flex:1;max-width:420px;margin:0 auto;background:#33352f;border-radius:8px;padding:5px 14px;font-size:12px;color:var(--muted);text-align:center">app.ngernluea.co/dashboard</div>
+      <div style="width:54px"></div>
+    </div>
+    <div style="display:flex;background:var(--bg);border-radius:0 0 16px 16px;overflow:hidden;min-height:760px;border:1px solid #dcd8cf;border-top:none">
+
+      <!-- SIDEBAR -->
+      <div style="width:236px;flex:none;background:var(--card);border-right:1px solid #eee9e0;padding:22px 16px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 8px 22px">
+          <div style="width:32px;height:32px;border-radius:9px;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px">฿</div>
+          <span style="font-weight:700;font-size:16px">เงินเหลือ</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <sc-for list="{{ webNav }}" as="n" hint-placeholder-count="8">
+            <div style="{{ n.style }}"><span style="font-size:16px;width:20px;text-align:center">{{ n.icon }}</span>{{ n.label }}</div>
+          </sc-for>
+        </div>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--divider)">
+          <div style="width:34px;height:34px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;color:#2f7d5b;font-weight:600;font-size:14px">บ</div>
+          <div style="line-height:1.2"><div style="font-size:13.5px;font-weight:600">บอล</div><div style="font-size:11px;color:var(--muted)">ดูโปรไฟล์</div></div>
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div style="flex:1;padding:30px 32px;min-width:0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px">
+          <div>
+            <div style="font-size:23px;font-weight:700;letter-spacing:-0.01em">สวัสดีครับ, บอล</div>
+            <div style="font-size:13.5px;color:var(--muted);margin-top:3px">ภาพรวมเดือนมิถุนายน 2568</div>
+          </div>
+          <button style="height:42px;padding:0 20px;border-radius:12px;background:#2f7d5b;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px">+ เพิ่มรายการ</button>
+        </div>
+
+        <!-- top stat row -->
+        <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:16px">
+          <div style="background:#2f7d5b;border-radius:18px;padding:22px;color:#fff;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-26px;top:-26px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+            <div style="font-size:13px;opacity:0.85">เงินที่ใช้ได้จริง</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-0.02em;margin:6px 0 4px">฿12,800</div>
+            <div style="font-size:12.5px;opacity:0.8">หลังหักบิลและค่าใช้จ่ายที่รอแล้ว</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px"><div style="font-size:12.5px;color:var(--muted)">เงินในบัญชีทั้งหมด</div><div style="font-size:27px;font-weight:700;margin-top:8px">฿50,000</div><div style="font-size:12px;color:#3f9d6b;margin-top:8px">↑ มากกว่าเดือนก่อน</div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px"><div style="font-size:12.5px;color:var(--muted)">ต้องกันไว้</div><div style="font-size:27px;font-weight:700;margin-top:8px;color:#c98a3c">฿37,200</div><div style="font-size:12px;color:var(--muted);margin-top:8px">บิล หนี้ และเป้าหมาย</div></div>
+        </div>
+
+        <!-- chart + in/out -->
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><span style="font-size:15px;font-weight:700">รายจ่ายรายสัปดาห์</span><span style="font-size:12.5px;color:var(--muted)">4 สัปดาห์ล่าสุด</span></div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-around;gap:18px;height:170px">
+              <sc-for list="{{ weekBars }}" as="w" hint-placeholder-count="4">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;height:100%;justify-content:flex-end">
+                  <span style="font-size:12px;font-weight:600;color:var(--muted2)">{{ w.amount }}</span>
+                  <div style="width:100%;max-width:56px;border-radius:10px 10px 4px 4px;{{ w.barStyle }}"></div>
+                  <span style="font-size:12px;color:var(--muted)">{{ w.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+            <div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:3px;background:#3f9d6b"></span>เงินเข้าเดือนนี้</div>
+              <div style="font-size:28px;font-weight:700;color:#3f9d6b;margin-top:5px">฿70,000</div>
+            </div>
+            <div style="height:1px;background:var(--divider)"></div>
+            <div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:3px;background:#d9776a"></span>เงินออกเดือนนี้</div>
+              <div style="font-size:28px;font-weight:700;color:#d9776a;margin-top:5px">฿41,800</div>
+            </div>
+            <div style="font-size:12.5px;color:#3f9d6b;background:#eef7f1;border-radius:10px;padding:9px 12px">↓ ใช้จ่ายน้อยกว่าเดือนก่อน 8%</div>
+          </div>
+        </div>
+
+        <!-- budgets watch + recent -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+            <div style="font-size:15px;font-weight:700;margin-bottom:16px">งบที่ต้องระวัง</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <sc-for list="{{ watchBudgets }}" as="g" hint-placeholder-count="2">
+                <div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><span style="font-size:13.5px;font-weight:600">{{ g.name }}</span><span style="{{ g.tagStyle }}">{{ g.tag }}</span></div>
+                  <div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden"><div style="{{ g.barStyle }}"></div></div>
+                  <div style="font-size:12px;color:var(--muted);margin-top:7px">{{ g.detail }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-size:15px;font-weight:700">รายการล่าสุด</span><span style="font-size:12.5px;color:#2f7d5b;font-weight:600">ดูทั้งหมด</span></div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ webRecent }}" as="t" hint-placeholder-count="4">
+                <div style="{{ t.rowStyle }}">
+                  <div style="width:36px;height:36px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:15px">{{ t.icon }}</div>
+                  <div style="flex:1"><div style="font-size:13.5px;font-weight:600">{{ t.name }}</div><div style="font-size:11.5px;color:var(--muted)">{{ t.meta }}</div></div>
+                  <div style="{{ t.amountStyle }}">{{ t.amount }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div style="width:312px;flex:none;background:#fbfaf6;border-left:1px solid #eee9e0;padding:26px 22px;display:flex;flex-direction:column;gap:22px">
+        <div>
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:13px">บิลที่ใกล้ถึง</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ upcomingBills }}" as="b" hint-placeholder-count="3">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:11px">
+                <div style="width:34px;height:34px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:15px">{{ b.icon }}</div>
+                <div style="flex:1"><div style="font-size:13.5px;font-weight:600">{{ b.name }}</div><div style="font-size:11.5px;color:var(--muted)">{{ b.due }}</div></div>
+                <div style="font-size:13.5px;font-weight:700">{{ b.amount }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#eef7f1;border:1px solid #d6e9dd;border-radius:16px;padding:18px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2f7d5b;margin-bottom:10px"><span style="width:22px;height:22px;border-radius:7px;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">✦</span>สรุปสั้น ๆ</div>
+          <div style="font-size:13.5px;line-height:1.65;color:#3a4d42">เดือนนี้ค่าอาหารสูงกว่าปกติ ฿1,100 แต่คุณยังมีเงินใช้ได้จริง ฿12,800 ลองลดค่าอาหารวันละ ฿100 ในสัปดาห์นี้ก็กลับมาอยู่ในแผนได้ครับ</div>
+          <button style="margin-top:14px;width:100%;height:40px;border-radius:11px;background:#2f7d5b;color:#fff;font-size:13.5px;font-weight:600">ดูรายละเอียด</button>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px">เป้าหมายใกล้สำเร็จ</div>
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:11px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:17px">🛟</div><div style="flex:1"><div style="font-size:13px;font-weight:600">เงินฉุกเฉิน</div><div style="font-size:11.5px;color:var(--muted)">฿82,000 / ฿200,000</div></div><span style="font-size:15px;font-weight:800;color:#2f7d5b">41%</span></div>
+          <div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden"><div style="height:100%;width:41%;border-radius:6px;background:linear-gradient(90deg,#3f9d6b,#2f7d5b)"></div></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="height:34px"></div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isComponents }}" hint-placeholder-val="{{ true }}">
+  <div style="width:100%;max-width:1000px;margin:0 auto;padding:40px 24px 0">
+    <div style="margin-bottom:32px">
+      <div style="font-size:26px;font-weight:800;letter-spacing:-0.02em">ระบบดีไซน์ · เงินเหลือ</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:4px">สี ตัวอักษร และคอมโพเนนต์ที่ใช้ซ้ำทั้งแอป — สงบ เป็นมิตร อ่านง่าย</div>
+    </div>
+
+    <!-- COLORS -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">สี</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <sc-for list="{{ swatches }}" as="c" hint-placeholder-count="8">
+        <div>
+          <div style="height:58px;border-radius:12px;{{ c.box }}"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:9px">{{ c.name }}</div>
+          <div style="font-size:11.5px;color:var(--muted);font-family:monospace">{{ c.hex }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- TYPE -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">ตัวอักษร · Noto Sans Thai</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:46px;font-weight:800;letter-spacing:-0.03em">฿12,800</span><span style="font-size:12px;color:var(--muted)">จำนวนเงินหลัก · 46 / 800</span></div>
+      <div style="height:1px;background:var(--divider)"></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:23px;font-weight:700">หัวข้อหน้า</span><span style="font-size:12px;color:var(--muted)">23 / 700</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:15px;font-weight:700">หัวข้อส่วน</span><span style="font-size:12px;color:var(--muted)">15 / 700</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;font-weight:400">ข้อความเนื้อหาทั่วไป อ่านสบายตา</span><span style="font-size:12px;color:var(--muted)">14 / 400</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:12.5px;color:var(--muted)">ข้อความรอง คำอธิบายเล็ก ๆ</span><span style="font-size:12px;color:var(--muted)">12.5 / muted</span></div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">ปุ่ม</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+      <button style="height:48px;padding:0 24px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600;box-shadow:0 6px 16px -4px rgba(47,125,91,0.5)">ปุ่มหลัก</button>
+      <button style="height:48px;padding:0 24px;border-radius:14px;background:var(--track);color:#3a4d42;font-size:15px;font-weight:600">ปุ่มรอง</button>
+      <button style="height:48px;padding:0 24px;border-radius:14px;background:var(--card);border:1.5px dashed #cfe3d8;color:#2f7d5b;font-size:15px;font-weight:600">+ เพิ่มบิลประจำ</button>
+      <button style="width:48px;height:48px;border-radius:14px;background:var(--card);border:1px solid var(--border);font-size:18px;color:var(--muted2)">⌕</button>
+      <button style="height:48px;padding:0 20px;border-radius:14px;background:#fbecea;color:#d9776a;font-size:15px;font-weight:600">ลบรายการ</button>
+    </div>
+
+    <!-- INPUTS + chips + selector -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">ฟิลด์ & ตัวเลือก</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px">ช่องกรอกข้อความ</div><div style="height:48px;border:1px solid #e0ddd4;border-radius:13px;display:flex;align-items:center;padding:0 14px;font-size:14px;color:var(--text)">ค่ากาแฟเช้านี้</div></div>
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px">ช่องกรอกจำนวนเงิน</div><div style="height:60px;border:1.5px solid #2f7d5b;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:6px"><span style="font-size:22px;color:#c4c6bc">฿</span><span style="font-size:30px;font-weight:800;letter-spacing:-0.02em">145</span></div></div>
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px">เลือกบัญชี</div><div style="height:48px;border:1px solid #e0ddd4;border-radius:13px;display:flex;align-items:center;justify-content:space-between;padding:0 14px"><span style="font-size:13px;color:var(--muted)">จ่ายจาก</span><span style="font-size:14px;font-weight:600">บัญชีหลัก ›</span></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:8px">หมวด (chip)</div><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:9px 15px;border-radius:20px;background:#2f7d5b;color:#fff;font-size:13px;font-weight:500">อาหาร</span><span style="padding:9px 15px;border-radius:20px;background:var(--card);border:1px solid #e6e2d9;color:var(--muted2);font-size:13px">เดินทาง</span><span style="padding:9px 15px;border-radius:20px;background:var(--card);border:1px solid #e6e2d9;color:var(--muted2);font-size:13px">ช้อปปิ้ง</span></div></div>
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:8px">ตัวกรอง (chip)</div><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:9px 16px;border-radius:11px;background:#22251f;color:#fff;font-size:13px;font-weight:600">ทั้งหมด</span><span style="padding:9px 16px;border-radius:11px;background:var(--card);border:1px solid #ddd9d0;color:var(--muted2);font-size:13px;font-weight:600">รายจ่าย</span></div></div>
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:8px">สเต็ปเปอร์ / Segment</div><div style="display:inline-flex;background:var(--fill2);border-radius:13px;padding:4px;gap:3px"><span style="padding:9px 22px;border-radius:10px;background:var(--card);color:#d9776a;font-size:14px;font-weight:600;box-shadow:0 1px 2px rgba(40,42,33,0.1)">รายจ่าย</span><span style="padding:9px 22px;border-radius:10px;color:#8a8c82;font-size:14px;font-weight:600">รายรับ</span></div></div>
+      </div>
+    </div>
+
+    <!-- progress + badges -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">Progress & สถานะ</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr;gap:28px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px"><span style="color:var(--muted2)">ปกติ</span><span style="color:var(--muted)">40%</span></div><div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden"><div style="height:100%;width:40%;background:#2f7d5b;border-radius:6px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px"><span style="color:var(--muted2)">ใกล้ถึงงบ</span><span style="color:#c98a3c">80%</span></div><div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden"><div style="height:100%;width:80%;background:#c98a3c;border-radius:6px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px"><span style="color:var(--muted2)">เกินงบ</span><span style="color:#d9776a">100%</span></div><div style="height:9px;border-radius:6px;background:var(--track);overflow:hidden"><div style="height:100%;width:100%;background:#d9776a;border-radius:6px"></div></div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start">
+        <span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#e8f1ec;color:#2f7d5b">จ่ายแล้ว</span>
+        <span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#faf3e8;color:#c98a3c">อีก 3 วัน</span>
+        <span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#fbecea;color:#d9776a">เลยกำหนด</span>
+        <span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:var(--track);color:var(--muted)">รอดำเนินการ</span>
+        <span style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#eef7f1;color:#3f9d6b">รายรับ</span>
+      </div>
+    </div>
+
+    <!-- list items + cards -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">รายการ & การ์ด</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:8px 16px">
+        <div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--divider)"><div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">☕</div><div style="flex:1"><div style="font-size:14.5px;font-weight:600">Starbucks</div><div style="font-size:12px;color:var(--muted)">อาหาร · วันนี้</div></div><div style="font-size:15px;font-weight:700">-฿145</div></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:13px 0"><div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:16px">💰</div><div style="flex:1"><div style="font-size:14.5px;font-weight:600">เงินเดือน</div><div style="font-size:12px;color:var(--muted)">รายรับ · 25 มิ.ย.</div></div><div style="font-size:15px;font-weight:700;color:#3f9d6b">+฿70,000</div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px"><div style="width:38px;height:38px;border-radius:11px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:17px">🌐</div><div style="flex:1"><div style="font-size:14.5px;font-weight:600">Internet</div><div style="font-size:14px;font-weight:700;margin-top:2px">฿699</div></div><span style="font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:8px;background:#e8f1ec;color:#2f7d5b">อีก 3 วัน</span></div>
+    </div>
+
+    <!-- states -->
+    <div style="font-size:13px;font-weight:700;color:var(--muted2);letter-spacing:0.04em;margin-bottom:12px">สถานะพิเศษ — ว่าง / สำเร็จ / Toast / Modal</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:50px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:60px;height:60px;border-radius:18px;background:var(--track);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px">🧾</div>
+        <div style="font-size:15px;font-weight:700">ยังไม่มีรายการ</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5">เริ่มบันทึกรายจ่ายแรกได้เลย</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px 20px;display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:60px;height:60px;border-radius:50%;background:#e8f1ec;display:flex;align-items:center;justify-content:center;margin-bottom:14px"><div style="width:36px;height:36px;border-radius:50%;background:#2f7d5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">✓</div></div>
+        <div style="font-size:15px;font-weight:700">บันทึกแล้ว</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5">ยังเหลืองบอาหารอีก ฿1,200</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;justify-content:center">
+        <div style="background:#22251f;color:#fff;padding:12px 18px;border-radius:13px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px"><span style="color:#7fd0a3">✓</span>บันทึกรายการแล้ว</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 8px 24px -12px rgba(40,42,33,0.2)"><div style="font-size:14px;font-weight:700;margin-bottom:6px">ลบรายการนี้?</div><div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">การลบไม่สามารถย้อนกลับได้</div><div style="display:flex;gap:8px"><button style="flex:1;height:38px;border-radius:10px;background:var(--fill2);color:var(--muted2);font-size:13px;font-weight:600">ยกเลิก</button><button style="flex:1;height:38px;border-radius:10px;background:#d9776a;color:#fff;font-size:13px;font-weight:600">ลบ</button></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:920}}">
+class Component extends DCLogic {
+  state = {
+    view: 'mobile',        // mobile | web | components
+    screen: 'onboarding',  // onboarding | home | add | transactions | plan | bills | accounts | goals
+    hero: 3,
+    onbStep: 1,            // 1..4, 5 = done
+    payDay: 25,
+    recurring: ['ค่าบ้าน / ค่าเช่า','บัตรเครดิต','Internet'],
+    goalPick: 'มีเงินเหลือปลายเดือน',
+    addType: 'expense',
+    addAmount: 0,
+    addCat: 'อาหาร',
+    addSuccess: false,
+    sheetOpen: false,
+    toast: null,
+    txns: [],
+    txnFilter: 'all',   // all | expense | income | month
+    demoEmpty: false,
+    mode: 'beginner',   // beginner | advanced
+    toggles: { bills:true, budget:true, weekly:false, biometric:true, hideAmounts:false },
+    dark: false,
+  };
+
+  fmt(n){ return '฿' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+
+  tab(active){
+    return 'padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;transition:.15s;' +
+      (active ? 'background:var(--card);color:var(--text);box-shadow:0 1px 2px rgba(40,42,33,0.12)' : 'background:transparent;color:#8a8c82');
+  }
+  chip(active){
+    return 'flex:none;padding:9px 16px;border-radius:11px;font-size:13px;font-weight:600;font-family:inherit;white-space:nowrap;transition:.15s;' +
+      (active ? 'background:#22251f;color:#fff' : 'background:var(--card);color:var(--muted2);border:1px solid #ddd9d0');
+  }
+  miniTab(active){
+    return 'padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;font-family:inherit;' +
+      (active ? 'background:#2f7d5b;color:#fff' : 'background:transparent;color:#8a8c82');
+  }
+
+  go(screen){ this.setState({ screen, addSuccess:false }); }
+
+  renderVals(){
+    const s = this.state;
+    const set = (p)=>()=>this.setState(p);
+
+    // ---- top tabs ----
+    const isMobile = s.view==='mobile', isWeb = s.view==='web', isComponents = s.view==='components';
+
+    // ---- screen chips ----
+    const screenList = [
+      ['onboarding','เริ่มต้นใช้งาน'],['home','หน้าแรก'],['add','เพิ่มรายการ'],
+      ['transactions','รายการ'],['plan','แผนเงิน'],['bills','บิล'],
+      ['accounts','บัญชี'],['goals','เป้าหมาย'],
+    ];
+    const screenTabs = screenList.map(([k,label])=>({
+      label, onClick: ()=>this.go(k), style: this.chip(s.screen===k)
+    }));
+
+    // ---- onboarding ----
+    const onbDots = [1,2,3,4].map(i=>({
+      style:'flex:1;height:5px;border-radius:3px;background:'+((i<=Math.min(s.onbStep,4))?'#2f7d5b':'#e3e0d7')
+    }));
+    const payDays = [1,5,10,15,25,28].map(d=>({
+      label:'ทุกวันที่ '+d, onClick:set({payDay:d}),
+      style:'padding:14px 6px;border-radius:14px;font-size:13.5px;font-weight:600;font-family:inherit;'+
+        (s.payDay===d?'background:#e8f1ec;border:1.5px solid #2f7d5b;color:#2f7d5b':'background:var(--card);border:1px solid #e6e2d9;color:var(--muted2)')
+    }));
+    const recurNames = ['ค่าบ้าน / ค่าเช่า','ค่ารถ','บัตรเครดิต','ค่าโทรศัพท์','Internet','Streaming','อื่น ๆ'];
+    const recurringOptions = recurNames.map(n=>{
+      const on = s.recurring.includes(n);
+      return { label:n, onClick:()=>this.setState(st=>({recurring: on?st.recurring.filter(x=>x!==n):[...st.recurring,n]})),
+        style:'display:flex;align-items:center;justify-content:space-between;text-align:left;padding:15px 14px;border-radius:14px;font-family:inherit;'+
+          (on?'background:#e8f1ec;border:1.5px solid #2f7d5b;color:var(--text)':'background:var(--card);border:1px solid #e6e2d9;color:var(--muted2)'),
+        checkStyle:'width:20px;height:20px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;'+
+          (on?'background:#2f7d5b;color:#fff':'background:#f0ede5;color:transparent;border:1px solid #e0ddd4') };
+    });
+    const goalNames = ['มีเงินเหลือปลายเดือน','เก็บเงิน','ลดหนี้','คุมรายจ่าย','เริ่มลงทุน'];
+    const goalOptions = goalNames.map(n=>{
+      const on = s.goalPick===n;
+      return { label:n, onClick:set({goalPick:n}),
+        style:'display:flex;align-items:center;gap:14px;text-align:left;padding:16px 16px;border-radius:14px;font-family:inherit;'+
+          (on?'background:#e8f1ec;border:1.5px solid #2f7d5b;color:var(--text)':'background:var(--card);border:1px solid #e6e2d9;color:var(--muted2)'),
+        dotStyle:'width:20px;height:20px;border-radius:50%;flex:none;'+
+          (on?'background:#2f7d5b;border:5px solid #cfe3d8':'background:var(--card);border:2px solid #d8d4cb') };
+    });
+    const onbNext = ()=>{
+      if(s.onbStep>=5){ this.setState({view:'mobile',screen:'home'}); return; }
+      this.setState(st=>({onbStep: st.onbStep+1}));
+    };
+    const onbBack = ()=> this.setState(st=>({onbStep: Math.max(1, st.onbStep-1)}));
+    const onbCtaLabel = s.onbStep>=5 ? 'เริ่มใช้งาน' : (s.onbStep===4 ? 'เสร็จสิ้น' : 'ถัดไป');
+
+    // ---- bills ----
+    const upcomingBills = [
+      {icon:'🌐',name:'Internet',due:'อีก 3 วัน',amount:'฿699'},
+      {icon:'💳',name:'บัตรเครดิต',due:'อีก 6 วัน',amount:'฿8,500'},
+      {icon:'🎬',name:'Netflix',due:'อีก 8 วัน',amount:'฿105'},
+    ].map((b,i,a)=>({...b, rowStyle:'display:flex;align-items:center;gap:13px;padding:14px 16px;'+(i<a.length-1?'border-bottom:1px solid var(--divider)':'')}));
+
+    // ---- watch budgets ----
+    const watchBudgets = [
+      {name:'อาหาร',pct:80,tag:'ใกล้ถึงงบที่ตั้งไว้',detail:'ใช้ไป ฿4,800 จาก ฿6,000 · เหลือ ฿1,200',color:'#c98a3c',bg:'#faf3e8'},
+      {name:'ช้อปปิ้ง',pct:90,tag:'ใช้ไปแล้ว 90%',detail:'ใช้ไป ฿1,800 จาก ฿2,000 · เหลือ ฿200',color:'#d9776a',bg:'#fbecea'},
+    ].map(g=>({
+      name:g.name, tag:g.tag, detail:g.detail,
+      tagStyle:'font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:8px;color:'+g.color+';background:'+g.bg,
+      barStyle:'height:100%;width:'+g.pct+'%;border-radius:6px;background:'+g.color
+    }));
+
+    // ---- recent txns (seed + user added) ----
+    const seed = [
+      {icon:'☕',name:'Starbucks',cat:'อาหาร',day:'วันนี้',amt:-145},
+      {icon:'🚗',name:'Grab',cat:'เดินทาง',day:'วันนี้',amt:-119},
+      {icon:'🏪',name:'7-Eleven',cat:'ของใช้',day:'เมื่อวาน',amt:-220},
+      {icon:'💰',name:'เงินเดือน',cat:'รายรับ',day:'25 มิ.ย.',amt:70000},
+    ];
+    const allTxns = [...s.txns, ...seed];
+    const recentTxns = allTxns.slice(0,3).map((t,i,a)=>({
+      icon:t.icon, name:t.name, meta:t.cat+' · '+t.day,
+      amount:(t.amt>=0?'+':'-')+this.fmt(t.amt),
+      amountStyle:'font-size:15px;font-weight:700;color:'+(t.amt>=0?'#3f9d6b':'var(--text)'),
+      rowStyle:'display:flex;align-items:center;gap:13px;padding:14px 16px;'+(i<a.length-1?'border-bottom:1px solid var(--divider)':'')
+    }));
+
+    // ---- transactions screen ----
+    const filterDefs = [['all','ทั้งหมด'],['expense','รายจ่าย'],['income','รายรับ'],['month','เดือนนี้']];
+    const txnFilters = filterDefs.map(([k,label])=>({label,onClick:()=>this.setState({txnFilter:k}),style:this.chip(s.txnFilter===k)}));
+    const filtered = allTxns.filter(t=> s.txnFilter==='expense'? t.amt<0 : s.txnFilter==='income'? t.amt>0 : true);
+    const order = ['วันนี้','เมื่อวาน','25 มิ.ย.'];
+    const txnGroups = order.map(label=>{
+      const items = filtered.filter(t=>t.day===label);
+      if(!items.length) return null;
+      const sum = items.reduce((a,t)=>a+t.amt,0);
+      return { label, sum:(sum>=0?'+':'-')+this.fmt(sum), items: items.map((t,i,a)=>({
+        icon:t.icon, name:t.name, cat:t.cat,
+        amount:(t.amt>=0?'+':'-')+this.fmt(t.amt),
+        amountStyle:'font-size:15px;font-weight:700;color:'+(t.amt>=0?'#3f9d6b':'var(--text)'),
+        rowStyle:'display:flex;align-items:center;gap:13px;padding:14px 16px;'+(i<a.length-1?'border-bottom:1px solid var(--divider)':'')
+      })) };
+    }).filter(Boolean);
+    const txnEmpty = s.demoEmpty;
+    const txnHasItems = !s.demoEmpty && txnGroups.length>0;
+
+    // ---- plan categories ----
+    const planCats = [
+      {icon:'🍜',name:'อาหาร',used:4800,total:6000,color:'#c98a3c',warn:true},
+      {icon:'🚗',name:'เดินทาง',used:1250,total:3000,color:'#2f7d5b',warn:false},
+      {icon:'🛍️',name:'ช้อปปิ้ง',used:1800,total:2000,color:'#d9776a',warn:true},
+      {icon:'🛒',name:'ของใช้',used:900,total:2500,color:'#2f7d5b',warn:false},
+      {icon:'💊',name:'สุขภาพ',used:300,total:1500,color:'#2f7d5b',warn:false},
+    ].map(c=>{const pct=Math.min(100,Math.round(c.used/c.total*100));const left=c.total-c.used;return{
+      icon:c.icon,name:c.name,warn:c.warn,used:this.fmt(c.used),total:this.fmt(c.total),left:this.fmt(left),
+      leftColor:c.warn?'#c98a3c':'#2f7d5b',
+      barStyle:'height:100%;width:'+pct+'%;border-radius:6px;background:'+c.color };});
+
+    // ---- bills timeline ----
+    const billsTimeline = [
+      {date:'23 มิ.ย.',icon:'🎬',name:'Netflix',amt:105,status:'อีก 1 วัน',state:'soon'},
+      {date:'25 มิ.ย.',icon:'🌐',name:'Internet',amt:699,status:'อีก 3 วัน',state:'upcoming'},
+      {date:'30 มิ.ย.',icon:'💳',name:'บัตรเครดิต',amt:8500,status:'อีก 8 วัน',state:'upcoming'},
+      {date:'15 มิ.ย.',icon:'📱',name:'ค่าโทรศัพท์',amt:399,status:'จ่ายแล้ว',state:'paid'},
+    ].map(b=>{
+      const paid=b.state==='paid', soon=b.state==='soon';
+      return {date:b.date,icon:b.icon,name:b.name,amount:this.fmt(b.amt),status:b.status,
+        dotStyle:'width:14px;height:14px;border-radius:50%;border:3px solid var(--bg);background:'+(paid?'#c5c8bf':soon?'#c98a3c':'#2f7d5b'),
+        cardExtra: paid?'opacity:0.62':'',
+        statusStyle:'font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:8px;white-space:nowrap;'+
+          (paid?'background:var(--track);color:var(--muted)':soon?'background:#faf3e8;color:#c98a3c':'background:#e8f1ec;color:#2f7d5b')};
+    });
+
+    // ---- accounts ----
+    const assetRows = [
+      {icon:'🏦',name:'บัญชีหลัก',amt:28500},{icon:'💵',name:'เงินสด',amt:1200},{icon:'📲',name:'e-Wallet',amt:2300},
+    ].map((a,i,arr)=>({icon:a.icon,name:a.name,amount:this.fmt(a.amt),rowStyle:'display:flex;align-items:center;gap:13px;padding:15px 16px;'+(i<arr.length-1?'border-bottom:1px solid var(--divider)':'')}));
+    const debtRows = [
+      {icon:'💳',name:'บัตรเครดิต KTC',sub:'ครบกำหนด 30 มิ.ย.',amt:8500},
+      {icon:'🏠',name:'สินเชื่อบ้าน',sub:'ผ่อนเดือนละ ฿24,000',amt:5700000},
+    ].map((d,i,arr)=>({icon:d.icon,name:d.name,sub:d.sub,amount:'-'+this.fmt(d.amt),rowStyle:'display:flex;align-items:center;gap:13px;padding:15px 16px;'+(i<arr.length-1?'border-bottom:1px solid var(--divider)':'')}));
+
+    // ---- goals ----
+    const goalCards = [
+      {icon:'🛟',iconBg:'#e8f1ec',name:'เงินฉุกเฉิน',target:200000,saved:82000},
+      {icon:'🗾',iconBg:'#eaf0f7',name:'เที่ยวญี่ปุ่น',target:50000,saved:12500},
+    ].map(g=>{const pct=Math.round(g.saved/g.target*100);return{
+      icon:g.icon,iconBg:g.iconBg,name:g.name,target:this.fmt(g.target),saved:this.fmt(g.saved),
+      pct:pct+'%',remaining:'เหลืออีก '+this.fmt(g.target-g.saved),
+      barStyle:'height:100%;width:'+pct+'%;border-radius:7px;background:linear-gradient(90deg,#3f9d6b,#2f7d5b)' };});
+
+    // ---- web dashboard ----
+    const webNavDef = [['หน้าแรก','⌂',true],['รายการ','☰',false],['แผนเงิน','◷',false],['บิล','🔔',false],['บัญชี','▤',false],['เป้าหมาย','◎',false],['รายงาน','▥',false],['ตั้งค่า','⚙',false]];
+    const webNav = webNavDef.map(([label,icon,active])=>({label,icon,
+      style:'display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;font-size:14px;font-weight:'+(active?'600':'500')+';cursor:pointer;'+
+        (active?'background:#e8f1ec;color:#2f7d5b':'color:#6c6e65')}));
+    const weekVals=[9200,11400,8600,12600]; const wkMax=14000;
+    const weekBars=weekVals.map((v,i)=>({label:'สัปดาห์ '+(i+1),amount:this.fmt(v),
+      barStyle:'height:'+Math.round(v/wkMax*100)+'%;background:'+(i===weekVals.length-1?'#2f7d5b':'#cde0d5')}));
+    const webRecent=allTxns.slice(0,4).map((t,i,a)=>({icon:t.icon,name:t.name,meta:t.cat+' · '+t.day,
+      amount:(t.amt>=0?'+':'-')+this.fmt(t.amt),
+      amountStyle:'font-size:14px;font-weight:700;color:'+(t.amt>=0?'#3f9d6b':'var(--text)'),
+      rowStyle:'display:flex;align-items:center;gap:12px;padding:11px 0;'+(i<a.length-1?'border-bottom:1px solid #f4f1ea':'')}));
+
+    // ---- add screen ----
+    const catNames = ['อาหาร','เดินทาง','ของใช้','ช้อปปิ้ง','บิล','สุขภาพ','เที่ยว','อื่น ๆ'];
+    const catChips = catNames.map(c=>({
+      label:c, onClick:set({addCat:c}),
+      style:'flex:none;padding:9px 15px;border-radius:20px;font-size:13px;font-weight:500;font-family:inherit;white-space:nowrap;'+
+        (s.addCat===c?'background:#2f7d5b;color:#fff':'background:var(--card);color:var(--muted2);border:1px solid #e6e2d9')
+    }));
+    const tapDigit = (d)=> this.setState(st=>({addAmount: Math.min(st.addAmount*Math.pow(10,(''+d).length)+Number(d), 99999999)}));
+    const keypad = ['1','2','3','4','5','6','7','8','9','00','0','⌫'].map(k=>({
+      label:k, onClick: k==='⌫' ? ()=>this.setState(st=>({addAmount: Math.floor(st.addAmount/10)})) : ()=>tapDigit(k)
+    }));
+    const addAmountDisplay = s.addAmount.toLocaleString('en-US');
+    const amountStyle = 'font-size:56px;font-weight:800;letter-spacing:-0.03em;color:'+(s.addAmount>0?'var(--text)':'#c4c6bc');
+    const saveTxn = ()=>{
+      const expense = s.addType==='expense';
+      const amt = (expense?-1:1)*(s.addAmount||0);
+      const iconMap={'อาหาร':'🍜','เดินทาง':'🚗','ของใช้':'🛒','ช้อปปิ้ง':'🛍️','บิล':'🧾','สุขภาพ':'💊','เที่ยว':'✈️','อื่น ๆ':'•'};
+      const t={icon: expense?(iconMap[s.addCat]||'•'):'💰', name: expense? s.addCat : 'รายรับ', meta:(expense?s.addCat:'รายรับ')+' · วันนี้', amt};
+      this.setState(st=>({ txns:[t,...st.txns], addSuccess:true }));
+    };
+
+    // ---- nav ----
+    const navDef = [
+      ['home','หน้าแรก','⌂'],['transactions','รายการ','☰'],['__add','',''],['plan','แผนเงิน','◷'],['more','เพิ่มเติม','⋯'],
+    ];
+    const navItems = navDef.filter(n=>n[0]!=='__add').map(([k,label,icon])=>({
+      label, icon, onClick:()=>this.go(k),
+      style:'flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;font-family:inherit;color:'+
+        ((s.screen===k||(k==='more'&&['more','accounts','goals','bills','settings'].includes(s.screen)))?'#2f7d5b':'#aeb0a6')
+    }));
+    // spacer for center button
+    navItems.splice(2,0,{label:'',icon:'',onClick:()=>{},style:'flex:1'});
+
+    // toast
+    const toast = (msg)=>{ this.setState({toast:msg}); clearTimeout(this._tt); this._tt=setTimeout(()=>this.setState({toast:null}),2600); };
+
+    return {
+      isMobile, isWeb, isComponents,
+      setMobile:()=>this.setState({view:'mobile'}), setWeb:()=>this.setState({view:'web'}), setComponents:()=>this.setState({view:'components'}),
+      tabMobileStyle:this.tab(isMobile), tabWebStyle:this.tab(isWeb), tabCompStyle:this.tab(isComponents),
+      screenTabs,
+      screenHome:s.screen==='home', screenAdd:s.screen==='add', screenOnboarding:s.screen==='onboarding',
+      screenTxns:s.screen==='transactions', screenPlan:s.screen==='plan', screenBills:s.screen==='bills',
+      screenAccounts:s.screen==='accounts', screenGoals:s.screen==='goals', screenMore:s.screen==='more',
+      isBeginner:s.mode==='beginner', isAdvanced:s.mode==='advanced',
+      setBeginner:()=>this.setState({mode:'beginner'}), setAdvanced:()=>this.setState({mode:'advanced'}),
+      modeBeginnerStyle:'flex:1;height:38px;border-radius:10px;font-size:13.5px;font-weight:600;font-family:inherit;'+(s.mode==='beginner'?'background:var(--card);color:#2f7d5b;box-shadow:0 1px 2px rgba(40,42,33,0.12)':'background:transparent;color:#8a8c82'),
+      modeAdvancedStyle:'flex:1;height:38px;border-radius:10px;font-size:13.5px;font-weight:600;font-family:inherit;'+(s.mode==='advanced'?'background:var(--card);color:#2f7d5b;box-shadow:0 1px 2px rgba(40,42,33,0.12)':'background:transparent;color:#8a8c82'),
+      moreMain:[
+        {icon:'🏦',label:'บัญชีของฉัน',sub:'เงินที่มีและยอดที่ต้องจ่าย',onClick:()=>this.go('accounts')},
+        {icon:'🎯',label:'เป้าหมายของฉัน',sub:'เงินเก็บและเป้าหมาย',onClick:()=>this.go('goals')},
+        {icon:'🔔',label:'บิลที่ต้องจ่าย',sub:'บิลประจำและกำหนดจ่าย',onClick:()=>this.go('bills')},
+        {icon:'⚙️',label:'ตั้งค่า',sub:'โปรไฟล์ การแจ้งเตือน ความปลอดภัย',onClick:()=>this.go('settings')},
+      ].map((m,i,a)=>({...m,rowStyle:'display:flex;align-items:center;gap:14px;padding:16px;font-family:inherit;text-align:left;width:100%;background:transparent;'+(i<a.length-1?'border-bottom:1px solid var(--divider)':'')})),
+      moreAdvanced:[
+        {icon:'📊',label:'รายงานเชิงลึก',sub:'แนวโน้มรายจ่ายและสรุปรายปี'},
+        {icon:'🏷️',label:'แท็กและหมวดแบบละเอียด',sub:'แยกหมวดย่อยได้เอง'},
+        {icon:'📤',label:'ส่งออกข้อมูล (CSV)',sub:'ดาวน์โหลดรายการทั้งหมด'},
+        {icon:'💱',label:'หลายสกุลเงิน',sub:'รองรับเงินตราต่างประเทศ'},
+      ].map((m,i,a)=>({...m,rowStyle:'display:flex;align-items:center;gap:14px;padding:16px;text-align:left;width:100%;'+(i<a.length-1?'border-bottom:1px solid var(--divider)':'')})),
+      // ---- settings ----
+      screenSettings:s.screen==='settings',
+      themeAttr: s.dark ? 'dark' : 'light',
+      swDarkClick:()=>this.setState(st=>({dark:!st.dark})),
+      swDarkTrack:'position:relative;width:46px;height:27px;border-radius:14px;flex:none;transition:.18s;background:'+(s.dark?'#2f7d5b':'#d8d4cb'),
+      swDarkKnob:'position:absolute;top:3px;left:'+(s.dark?'22px':'3px')+';width:21px;height:21px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,0.2)',
+      ...(()=>{ const out={}; ['bills','budget','weekly','biometric','hideAmounts'].forEach(key=>{
+        const on=s.toggles[key]; const cap=key.charAt(0).toUpperCase()+key.slice(1);
+        out['sw'+cap+'Click']=()=>this.setState(st=>({toggles:{...st.toggles,[key]:!st.toggles[key]}}));
+        out['sw'+cap+'Track']='position:relative;width:46px;height:27px;border-radius:14px;flex:none;transition:.18s;background:'+(on?'#2f7d5b':'#d8d4cb');
+        out['sw'+cap+'Knob']='position:absolute;top:3px;left:'+(on?'22px':'3px')+';width:21px;height:21px;border-radius:50%;background:var(--card);transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,0.2)';
+      }); return out; })(),
+      txnFilters, txnGroups, txnEmpty, txnHasItems, toggleEmpty:()=>this.setState(st=>({demoEmpty:!st.demoEmpty})),
+      planCats, billsTimeline, assetRows, debtRows, goalCards,
+      webNav, weekBars, webRecent,
+      swatches:[
+        {name:'พื้นหลัง',hex:'#F5F3EE',box:'background:var(--bg);border:1px solid #e6e2d9'},
+        {name:'การ์ด',hex:'#FFFFFF',box:'background:var(--card);border:1px solid #e6e2d9'},
+        {name:'ตัวอักษรหลัก',hex:'#22251F',box:'background:#22251f'},
+        {name:'ตัวอักษรรอง',hex:'#9A9C92',box:'background:var(--muted)'},
+        {name:'สีหลัก',hex:'#2F7D5B',box:'background:#2f7d5b'},
+        {name:'เงินเข้า',hex:'#3F9D6B',box:'background:#3f9d6b'},
+        {name:'เงินออก',hex:'#D9776A',box:'background:#d9776a'},
+        {name:'เตือน',hex:'#C98A3C',box:'background:#c98a3c'},
+      ],
+      // hero
+      setHero1:set({hero:1}), setHero2:set({hero:2}), setHero3:set({hero:3}),
+      hero1Style:this.miniTab(s.hero===1), hero2Style:this.miniTab(s.hero===2), hero3Style:this.miniTab(s.hero===3),
+      heroA:s.hero===1, heroB:s.hero===2, heroC:s.hero===3,
+      // onboarding
+      onbDots, payDays, recurringOptions, goalOptions, onbNext, onbBack, onbCtaLabel,
+      onbIsStep1:s.onbStep===1, onbIsStep2:s.onbStep===2, onbIsStep3:s.onbStep===3, onbIsStep4:s.onbStep===4, onbIsDone:s.onbStep>=5,
+      onbCanBack: s.onbStep>1 && s.onbStep<5,
+      // home
+      upcomingBills, watchBudgets, recentTxns,
+      goBills:()=>this.go('bills'), goTxns:()=>this.go('transactions'), goHome:()=>this.go('home'), goMore:()=>this.go('more'), goAdd:()=>this.setState({screen:'add',addAmount:0,addSuccess:false}),
+      openSheet:()=>this.setState({sheetOpen:true}), closeSheet:()=>this.setState({sheetOpen:false}), stop:(e)=>e.stopPropagation(),
+      // add
+      addForm: !s.addSuccess, addSuccess:s.addSuccess,
+      setExpense:set({addType:'expense'}), setIncome:set({addType:'income'}),
+      segExpenseStyle:'flex:1;height:40px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;'+(s.addType==='expense'?'background:var(--card);color:#d9776a;box-shadow:0 1px 2px rgba(40,42,33,0.1)':'background:transparent;color:#8a8c82'),
+      segIncomeStyle:'flex:1;height:40px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;'+(s.addType==='income'?'background:var(--card);color:#3f9d6b;box-shadow:0 1px 2px rgba(40,42,33,0.1)':'background:transparent;color:#8a8c82'),
+      addAmountDisplay, amountStyle, catChips, keypad, saveTxn,
+      // nav
+      showNav: s.screen!=='onboarding' && s.screen!=='add',
+      navItems,
+      // sheet/toast
+      sheetOpen:s.sheetOpen, toastOpen:!!s.toast, toastMsg:s.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>
