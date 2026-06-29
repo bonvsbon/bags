@@ -18,7 +18,7 @@ export default function WebDashboard({ v }) {
         {/* SIDEBAR */}
         <div style={css('width:236px;flex:none;background:var(--card);border-right:1px solid var(--divider);padding:22px 16px;display:flex;flex-direction:column')}>
           <div style={css('display:flex;align-items:center;gap:10px;padding:0 8px 22px')}>
-            <div style={css('width:32px;height:32px;border-radius:9px;background:#2f7d5b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px')}>฿</div>
+            <img src="/logo.svg" width="34" height="34" alt="เงินทอน" style={css('display:block')} />
             <span style={css('font-weight:700;font-size:16px')}>เงินทอน</span>
           </div>
           <div style={css('display:flex;flex-direction:column;gap:3px')}>

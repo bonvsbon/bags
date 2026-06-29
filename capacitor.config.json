@@ -1,0 +1,13 @@
+{
+  "appId": "app.ngernthon",
+  "appName": "เงินทอน",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

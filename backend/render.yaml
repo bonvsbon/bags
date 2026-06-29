@@ -1,0 +1,20 @@
+# Render.com blueprint. Deploy: push repo, "New > Blueprint", point at backend/.
+# Provision a managed Postgres (Render/Neon) and set DATABASE_URL + JWT_SECRET.
+services:
+  - type: web
+    name: ngern-thon-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # set to your Postgres URL (postgresql+psycopg://...)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false          # e.g. https://your-frontend.example.com
+      - key: ENABLE_SCHEDULER
+        value: "true"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
