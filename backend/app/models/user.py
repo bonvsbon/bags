@@ -21,6 +21,9 @@ class User(SQLModel, table=True):
     account_type: str = Field(default="registered")  # registered | guest
     created_at: datetime = Field(default_factory=_now)
     guest_expires_at: datetime | None = None
+    # AI (Phase 9)
+    subscription_tier: str = Field(default="free")  # free | paid
+    ai_consent_at: datetime | None = None  # PDPA: consented to cloud AI processing
 
 
 class AuthIdentity(SQLModel, table=True):

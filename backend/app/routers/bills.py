@@ -1,13 +1,14 @@
 from datetime import date
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import delete, select
 
 from app.deps import CurrentUser, SessionDep
 from app.models.finance import Bill, BillPayment, Transaction
 from app.money import to_baht, to_satang
 from app.services import ledger
+from app.services.ownership import require_owned_account, require_visible_category
 
 router = APIRouter(prefix="/bills", tags=["bills"])
 
@@ -18,7 +19,7 @@ def _period(d: date | None = None) -> str:
 
 class BillIn(BaseModel):
     name: str
-    amount: float
+    amount: float = Field(gt=0)
     icon: str | None = None
     due_day: int = 1
     recurrence: str = "monthly"  # monthly|yearly|once
@@ -29,7 +30,7 @@ class BillIn(BaseModel):
 
 class BillUpdate(BaseModel):
     name: str | None = None
-    amount: float | None = None
+    amount: float | None = Field(default=None, gt=0)
     icon: str | None = None
     due_day: int | None = None
     recurrence: str | None = None
@@ -85,6 +86,8 @@ def list_bills(user: CurrentUser, session: SessionDep):
 
 @router.post("", response_model=BillOut, status_code=201)
 def create_bill(body: BillIn, user: CurrentUser, session: SessionDep):
+    require_owned_account(session, user.id, body.account_id)
+    require_visible_category(session, user.id, body.category_id)
     data = body.model_dump()
     b = Bill(user_id=user.id, amount=to_satang(data.pop("amount")), **data)
     session.add(b)
@@ -99,6 +102,10 @@ def patch_bill(
 ):
     b = _owned(session, user.id, bill_id)
     data = body.model_dump(exclude_unset=True)
+    if "account_id" in data:
+        require_owned_account(session, user.id, data["account_id"])
+    if "category_id" in data:
+        require_visible_category(session, user.id, data["category_id"])
     if "amount" in data:
         b.amount = to_satang(data.pop("amount"))
     for k, v in data.items():

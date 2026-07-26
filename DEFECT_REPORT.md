@@ -1,6 +1,10 @@
 # Defect Report for Claude
 
-Date: 2026-06-29
+Date: 2026-06-29 · **Status: RESOLVED (2026-06-30)**
+
+> ✅ All 8 defects addressed. DEF-001–006 fixed in code; DEF-007 fixed by
+> dependency removal; DEF-008 is by-design and now documented.
+> Tickets archived under `defects/closed/`.
 
 ## Test Summary
 
@@ -15,11 +19,25 @@ cd backend
 .\.venv\Scripts\python.exe -m pytest tests\test_security_defects.py -q
 ```
 
-Current result:
+Result after fixes:
 
-- `6 failed`
-- Baseline without the new defect tests still passes: `47 passed`
-- Frontend tests still pass: `23 passed`
+- Backend: **53 passed** (47 baseline + 6 defect regression tests) — was `6 failed`
+- Frontend: **23 passed**
+- `npm audit`: **0 vulnerabilities** (was 6 high + 2 moderate)
+
+### Fix summary
+
+| Defect | Fix |
+|---|---|
+| DEF-001 / DEF-002 | `require_owned_account()` guard in `transactions.py` create + patch → foreign `account_id` returns 404 before any ledger change |
+| DEF-003 | `require_owned_account()` + `require_visible_category()` in `bills.py` create + patch |
+| DEF-004 | `require_visible_category()` in `budgets.py` create (system-default or own category only) |
+| DEF-005 | `TransactionIn/Update.amount` → `Field(gt=0)` (422) |
+| DEF-006 | `ContributeIn.amount` → `Field(gt=0)` (+ goal target/saved/monthly constraints) (422) |
+| DEF-007 | Removed dev-only `@capacitor/assets`; icons already generated/committed |
+| DEF-008 | By design — JDK needed to build Android; documented in `ANDROID.md` |
+
+New shared guards: `backend/app/services/ownership.py`.
 
 ## Defects
 

@@ -22,6 +22,7 @@ import {
   LiveTransactions,
 } from './morescreens.jsx';
 import LiveWebDashboard from './webdashboard.jsx';
+import LiveChat from './LiveChat.jsx';
 
 // 4 tabs around a center "+" FAB (matches showcase BottomNav)
 const NAV = [
@@ -49,6 +50,7 @@ function Shell({ onLogout, onExit, fullBleed }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [onboard, setOnboard] = useState(false);
   const [webMode, setWebMode] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const toastTimer = useRef();
   const screen = stack[stack.length - 1];
@@ -149,6 +151,21 @@ function Shell({ onLogout, onExit, fullBleed }) {
       </div>
       )}
       </>
+      )}
+
+      {/* AI assistant: floating head + full-screen overlay */}
+      {showNav && !onboard && !aiOpen && (
+        <button
+          onClick={() => setAiOpen(true)}
+          style={css('position:absolute;right:16px;bottom:96px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3f9d6b,#2f7d5b);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;z-index:35;box-shadow:0 8px 20px -4px rgba(47,125,91,0.6)')}
+        >💬</button>
+      )}
+      {aiOpen && (
+        <LiveChat
+          me={me}
+          onClose={() => setAiOpen(false)}
+          onConsented={() => api.me().then(setMe).catch(() => {})}
+        />
       )}
 
       {sheetOpen && (

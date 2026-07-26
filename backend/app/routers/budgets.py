@@ -1,24 +1,25 @@
 from datetime import date
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import select
 
 from app.deps import CurrentUser, SessionDep
 from app.models.finance import Budget
 from app.money import to_baht, to_satang
+from app.services.ownership import require_visible_category
 
 router = APIRouter(prefix="/budgets", tags=["budgets"])
 
 
 class BudgetIn(BaseModel):
     category_id: str
-    limit_amount: float
+    limit_amount: float = Field(gt=0)
     period: str | None = None  # YYYY-MM, defaults to current month
 
 
 class BudgetUpdate(BaseModel):
-    limit_amount: float | None = None
+    limit_amount: float | None = Field(default=None, gt=0)
 
 
 class BudgetOut(BaseModel):
@@ -55,6 +56,7 @@ def list_budgets(
 
 @router.post("", response_model=BudgetOut, status_code=201)
 def create_budget(body: BudgetIn, user: CurrentUser, session: SessionDep):
+    require_visible_category(session, user.id, body.category_id)
     period = body.period or date.today().strftime("%Y-%m")
     # One budget per (category, period): upsert.
     existing = session.exec(

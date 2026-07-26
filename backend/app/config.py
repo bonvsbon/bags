@@ -30,9 +30,35 @@ class Settings(BaseSettings):
     # Background jobs (APScheduler) — opt-in so tests/dev don't spawn a thread
     enable_scheduler: bool = False
 
+    # --- AI (Phase 9) ---
+    # Provider "pools" as comma-separated chains. Providers without a key are
+    # skipped when the pool is built, so you only list what you've signed up for.
+    ai_free_chain: str = "gemini,groq,openrouter,cerebras"
+    ai_paid_chain: str = ""
+    ai_allow_paid: bool = False        # hard gate: free users never hit paid providers
+    ai_daily_message_limit: int = 20   # per-user free cap (enforced in Phase 9.6)
+
+    # Provider API keys (blank = provider skipped)
+    gemini_api_key: str = ""
+    groq_api_key: str = ""
+    openrouter_api_key: str = ""
+    cerebras_api_key: str = ""
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+    @staticmethod
+    def _chain(value: str) -> list[str]:
+        return [p.strip() for p in value.split(",") if p.strip()]
+
+    @property
+    def ai_free_list(self) -> list[str]:
+        return self._chain(self.ai_free_chain)
+
+    @property
+    def ai_paid_list(self) -> list[str]:
+        return self._chain(self.ai_paid_chain)
 
 
 @lru_cache

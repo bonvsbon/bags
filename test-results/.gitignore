@@ -1,0 +1,11 @@
+*
+!.gitignore
+!README.md
+!backend/
+!frontend/
+!smoke/
+!screenshots/
+!backend/.gitkeep
+!frontend/.gitkeep
+!smoke/.gitkeep
+!screenshots/.gitkeep

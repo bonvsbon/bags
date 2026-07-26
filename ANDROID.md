@@ -53,6 +53,15 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 > ได้ไฟล์ `.apk` ตรง ๆ ไหม? ได้ — เมนู **Build → Build Bundle(s) / APK(s) → Build APK(s)**
 > ไฟล์อยู่ที่ `android/app/build/outputs/apk/debug/app-debug.apk` (ก๊อปไปลงเครื่องอื่นได้)
 
+### หรือ build จาก terminal (ไม่ต้องเปิด Studio)
+ต้องมี **JDK** (ใช้ตัวที่มากับ Android Studio ได้) — ชี้ `JAVA_HOME` ไปที่ JBR แล้วสั่ง gradle:
+```powershell
+$env:JAVA_HOME="D:\Android\Android Studio\jbr"   # แก้ path ตามที่ลง Android Studio ไว้
+& "D:\github\future\Bags\android\gradlew.bat" -p "D:\github\future\Bags\android" assembleDebug
+```
+ได้ไฟล์ที่ `android\app\build\outputs\apk\debug\app-debug.apk` เหมือนกัน
+> ถ้าขึ้น `JAVA_HOME is not set` หรือ `Unable to locate a Java Runtime` แปลว่ายังไม่ได้ชี้ JDK — ตั้ง `JAVA_HOME` ตามด้านบนก่อน
+
 ---
 
 ## แก้ปัญหา
@@ -61,8 +70,9 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 |---|---|
 | แอปเปิดมา "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้" | (1) รัน uvicorn ด้วย `--host 0.0.0.0` แล้วยัง (2) คอม+มือถือ Wi-Fi เดียวกันไหม (3) Firewall อนุญาต python แล้วไหม |
 | IP เครื่องเปลี่ยน (เช่นย้าย Wi-Fi) | แก้ `VITE_API_URL` ใน `.env.production` → `npm run android:build` → Run ใหม่ |
+| `gradlew` ขึ้น **JAVA_HOME is not set / no Java Runtime** | ตั้ง `JAVA_HOME` ไปที่ JBR ของ Android Studio (เช่น `D:\Android\Android Studio\jbr`) แล้วรันใหม่ |
 | Android Studio หา SDK ไม่เจอ | เปิด Android Studio → More Actions → SDK Manager → ลง "Android SDK Platform" ล่าสุด |
-| อยากได้ไอคอน ฿ สวย ๆ แทนไอคอนเริ่มต้น | ใช้ `@capacitor/assets` กับรูป PNG 1024×1024 (ทำทีหลังได้) |
+| อยากได้ไอคอน ฿ ใหม่ (regenerate) | `npm i -D @capacitor/assets` → `npx capacitor-assets generate --android` → `npm run android:build` (ถอนออกได้หลังทำเสร็จ — เป็น dev tool ครั้งคราว) |
 
 ---
 

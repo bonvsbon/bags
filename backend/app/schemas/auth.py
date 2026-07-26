@@ -38,3 +38,5 @@ class UserOut(BaseModel):
     email: str | None
     account_type: str
     created_at: datetime
+    subscription_tier: str = "free"
+    ai_consent_at: datetime | None = None

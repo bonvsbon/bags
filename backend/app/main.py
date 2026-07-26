@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.routers import (
     accounts,
+    ai,
     auth,
     bills,
     budgets,
@@ -63,6 +64,7 @@ for r in (
     goals.router,
     summary.router,
     insights.router,
+    ai.router,
 ):
     app.include_router(r, prefix="/api/v1")
 

@@ -9,6 +9,7 @@ from app.models.finance import (  # noqa: F401
     Goal,
     Transaction,
 )
+from app.models.ai import AiConversation, AiMessage  # noqa: F401
 from app.models.insight import Insight, Notification  # noqa: F401
 from app.models.profile import Profile, Settings  # noqa: F401
 from app.models.user import (  # noqa: F401

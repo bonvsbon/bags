@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import select
 
 from app.deps import CurrentUser, SessionDep
@@ -14,22 +14,22 @@ class GoalIn(BaseModel):
     name: str
     icon: str | None = None
     icon_bg: str | None = None
-    target_amount: float
-    saved_amount: float = 0
-    monthly_contribution: float | None = None
+    target_amount: float = Field(gt=0)
+    saved_amount: float = Field(default=0, ge=0)
+    monthly_contribution: float | None = Field(default=None, gt=0)
 
 
 class GoalUpdate(BaseModel):
     name: str | None = None
     icon: str | None = None
     icon_bg: str | None = None
-    target_amount: float | None = None
-    saved_amount: float | None = None
-    monthly_contribution: float | None = None
+    target_amount: float | None = Field(default=None, gt=0)
+    saved_amount: float | None = Field(default=None, ge=0)
+    monthly_contribution: float | None = Field(default=None, gt=0)
 
 
 class ContributeIn(BaseModel):
-    amount: float
+    amount: float = Field(gt=0)
 
 
 class GoalOut(BaseModel):

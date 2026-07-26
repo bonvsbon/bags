@@ -15,12 +15,12 @@ dependencies = [
     "apscheduler>=3.10",
     "google-auth>=2.36",
     "psycopg[binary]>=3.2",
+    "httpx>=0.28",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",
-    "httpx>=0.28",
 ]
 
 [tool.pytest.ini_options]

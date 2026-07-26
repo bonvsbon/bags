@@ -182,4 +182,14 @@ export const api = {
   // --- insights ---
   listInsights: () => request('GET', '/insights'),
   readInsight: (id) => request('POST', `/insights/${id}/read`),
+
+  // --- AI assistant (Phase 9) ---
+  ai: {
+    consent: () => request('POST', '/ai/consent'),
+    chat: (message, conversation_id) =>
+      request('POST', '/ai/chat', { message, conversation_id }),
+    listConversations: () => request('GET', '/ai/conversations'),
+    getConversation: (id) => request('GET', `/ai/conversations/${id}`),
+    deleteConversation: (id) => request('DELETE', `/ai/conversations/${id}`),
+  },
 };

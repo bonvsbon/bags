@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-001
+      - heading "Transaction create accepts another user account" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Security / Ledger"
+    - generic [ref=e8]: Critical
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected reject 400/404/422. Actual API returned 201 Created.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "_ test_transaction_create_rejects_foreign_account_and_does_not_mutate_balance _ client = <starlette.testclient.TestClient object at 0x0000020C72E118C0> def test_transaction_create_rejects_foreign_account_and_does_not_mutate_balance(client): owner_h = _register(client, \"txn-owner\") attacker_h = _register(client, \"txn-attacker\") foreign_account = _asset_account(client, owner_h, balance=10000) res = client.post( f\"{API}/transactions\", headers=attacker_h, json={\"type\": \"expense\", \"amount\": 1000, \"account_id\": foreign_account[\"id\"]}, ) > assert res.status_code in (400, 404, 422) E assert 201 in (400, 404, 422) E + where 201 = <Response [201 Created]>.status_code tests\\test_security_defects.py:39: AssertionError"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

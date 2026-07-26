@@ -1,20 +1,21 @@
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import select
 
 from app.deps import CurrentUser, SessionDep
 from app.models.finance import Transaction
 from app.money import to_baht, to_satang
 from app.services import ledger
+from app.services.ownership import require_owned_account, require_visible_category
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 
 class TransactionIn(BaseModel):
     type: str = "expense"  # expense | income
-    amount: float
+    amount: float = Field(gt=0)
     account_id: str | None = None
     category_id: str | None = None
     note: str | None = None
@@ -23,7 +24,7 @@ class TransactionIn(BaseModel):
 
 class TransactionUpdate(BaseModel):
     type: str | None = None
-    amount: float | None = None
+    amount: float | None = Field(default=None, gt=0)
     account_id: str | None = None
     category_id: str | None = None
     note: str | None = None
@@ -100,6 +101,8 @@ def list_transactions(
 
 @router.post("", response_model=TransactionOut, status_code=201)
 def create_transaction(body: TransactionIn, user: CurrentUser, session: SessionDep):
+    require_owned_account(session, user.id, body.account_id)
+    require_visible_category(session, user.id, body.category_id)
     amount = to_satang(body.amount)
     t = Transaction(
         user_id=user.id, type=body.type, amount=amount,
@@ -123,8 +126,12 @@ def patch_transaction(
     txn_id: str, body: TransactionUpdate, user: CurrentUser, session: SessionDep
 ):
     t = _owned(session, user.id, txn_id)
-    old_type, old_amount, old_account = t.type, t.amount, t.account_id
     data = body.model_dump(exclude_unset=True)
+    if "account_id" in data:
+        require_owned_account(session, user.id, data["account_id"])
+    if "category_id" in data:
+        require_visible_category(session, user.id, data["category_id"])
+    old_type, old_amount, old_account = t.type, t.amount, t.account_id
     if "amount" in data:
         t.amount = to_satang(data.pop("amount"))
     for k, v in data.items():
