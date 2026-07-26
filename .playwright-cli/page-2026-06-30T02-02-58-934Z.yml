@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-008
+      - heading "Android debug APK build blocked by missing JDK/JAVA_HOME" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Android / Build Environment"
+    - generic [ref=e8]: Medium
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Gradle assembleDebug cannot run on this machine until Java/JDK is configured.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "��.\\gradlew.bat : At line:2 char:101 + ... ocation android; try { .\\gradlew.bat assembleDebug *> ..\\$log; $code= ... + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ + CategoryInfo : NotSpecified: ( :String) [], RemoteException + FullyQualifiedErrorId : NativeCommandError ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. Please set the JAVA_HOME variable in your environment to match the location of your Java installation. exit_code=9009"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

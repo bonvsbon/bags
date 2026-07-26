@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-003
+      - heading "Bill create accepts another user account" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Security / Bills"
+    - generic [ref=e8]: High
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected reject foreign account. Actual API returned 201 Created.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "__________________ test_bill_create_rejects_foreign_account ___________________ client = <starlette.testclient.TestClient object at 0x0000020C72E11D00> def test_bill_create_rejects_foreign_account(client): owner_h = _register(client, \"bill-owner\") attacker_h = _register(client, \"bill-attacker\") foreign_account = _asset_account(client, owner_h, balance=10000) res = client.post( f\"{API}/bills\", headers=attacker_h, json={\"name\": \"rent\", \"amount\": 2000, \"due_day\": 1, \"account_id\": foreign_account[\"id\"]}, ) > assert res.status_code in (400, 404, 422) E assert 201 in (400, 404, 422) E + where 201 = <Response [201 Created]>.status_code tests\\test_security_defects.py:74: AssertionError"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

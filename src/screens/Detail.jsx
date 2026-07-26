@@ -51,13 +51,13 @@ export default function Detail({ v }) {
           <div style={css('font-size:18px;font-weight:800')}>฿640 <span style={css('font-size:12px;font-weight:500;color:var(--muted)')}>ถึงวันเงินเดือนออก</span></div>
         </div>
       </div>
-      <button onClick={v.openSheet} style={css('margin-top:12px;width:100%;background:var(--card);border:1px dashed #cfe3d8;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;text-align:left;font-family:inherit')}>
-        <span style={css('width:34px;height:34px;border-radius:10px;background:#e8f1ec;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none')}>✦</span>
-        <span style={css('flex:1')}>
-          <span style={css('display:block;font-size:14px;font-weight:600;color:var(--text)')}>ดูสรุปสั้น ๆ จากผู้ช่วย</span>
-          <span style={css('display:block;font-size:12px;color:var(--muted);margin-top:1px')}>เดือนนี้ใช้เงินไปกับอะไรบ้าง</span>
-        </span>
-        <span style={css('font-size:18px;color:#c4c6bc')}>›</span>
+      <button onClick={v.openAi} style={css('margin-top:12px;width:100%;background:linear-gradient(135deg,#3f9d6b,#2f7d5b);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;text-align:left;color:#fff;box-shadow:0 10px 24px -12px rgba(47,125,91,0.6)')}>
+        <div style={css('width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none')}>💬</div>
+        <div style={css('flex:1')}>
+          <div style={css('font-size:15px;font-weight:700')}>ถามผู้ช่วยเงินทอน</div>
+          <div style={css('font-size:12px;opacity:0.9;margin-top:1px')}>พิมพ์ถามได้เลย ผมคำนวณจากเงินของคุณให้</div>
+        </div>
+        <span style={css('font-size:18px;opacity:0.8')}>›</span>
       </button>
     </div>
   );

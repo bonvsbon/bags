@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- circular "return/refresh" arrow -->
+  <path d="M331 126 A150 150 0 1 1 181 126" stroke="#2E7D5B" stroke-width="34" stroke-linecap="round" fill="none"/>
+  <polygon points="210,104 168,118 192,152" fill="#2E7D5B"/>
+  <!-- receipt body with torn bottom edge -->
+  <path d="M206 182 a12 12 0 0 1 12 -12 H294 a12 12 0 0 1 12 12 V310 L296 330 L286 310 L276 330 L266 310 L256 330 L246 310 L236 330 L226 310 L216 330 L206 310 Z"
+        fill="#FFFFFF" stroke="#2E7D5B" stroke-width="6" stroke-linejoin="round"/>
+  <!-- top lines -->
+  <rect x="224" y="196" width="64" height="9" rx="4.5" fill="#2E7D5B"/>
+  <rect x="224" y="214" width="46" height="9" rx="4.5" fill="#2E7D5B"/>
+  <!-- baht symbol (vector strokes, no font dependency) -->
+  <g stroke="#2E7D5B" stroke-width="12" stroke-linecap="round" fill="none">
+    <path d="M242 234 V298"/>
+    <path d="M242 234 C270 234 270 266 242 266"/>
+    <path d="M242 266 C276 266 276 298 242 298"/>
+    <path d="M258 224 V308"/>
+  </g>
+  <!-- orange accent dot -->
+  <circle cx="362" cy="362" r="22" fill="#E9A15A"/>
+</svg>

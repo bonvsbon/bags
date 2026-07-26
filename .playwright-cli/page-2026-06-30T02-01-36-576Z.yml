@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-002
+      - heading "Transaction patch accepts another user account" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Security / Ledger"
+    - generic [ref=e8]: Critical
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected reject 400/404/422. Actual API returned 200 OK.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: Could not extract test_transaction_patch_rejects_foreign_account_and_does_not_mutate_balance
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

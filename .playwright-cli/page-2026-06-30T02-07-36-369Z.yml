@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-005
+      - heading "Transactions accept zero and negative amounts" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Validation / Ledger"
+    - generic [ref=e8]: Critical
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected 422. Actual API returned 201 Created.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "________________ test_transactions_reject_non_positive_amounts ________________ client = <starlette.testclient.TestClient object at 0x0000020C72E12580> def test_transactions_reject_non_positive_amounts(client): headers = _register(client, \"amount\") account = _asset_account(client, headers, balance=1000) for amount in (0, -100): res = client.post( f\"{API}/transactions\", headers=headers, json={\"type\": \"expense\", \"amount\": amount, \"account_id\": account[\"id\"]}, ) > assert res.status_code == 422 E assert 201 == 422 E + where 201 = <Response [201 Created]>.status_code tests\\test_security_defects.py:105: AssertionError"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

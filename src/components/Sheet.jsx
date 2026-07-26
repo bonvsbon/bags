@@ -30,7 +30,7 @@ export default function Sheet({ v }) {
         </div>
         <div style={css('display:flex;gap:10px;margin-top:18px')}>
           <button onClick={v.closeSheet} style={css('flex:none;padding:0 22px;height:50px;border-radius:14px;background:var(--fill2);color:var(--muted2);font-size:15px;font-weight:600')}>ไว้ก่อน</button>
-          <button onClick={v.closeSheet} style={css('flex:1;height:50px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600')}>ดูรายละเอียด</button>
+          <button onClick={v.sheetToAi} style={css('flex:1;height:50px;border-radius:14px;background:#2f7d5b;color:#fff;font-size:15px;font-weight:600')}>วางแผนกับ AI</button>
         </div>
       </div>
     </div>

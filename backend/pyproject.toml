@@ -1,0 +1,28 @@
+[project]
+name = "ngern-thon-backend"
+version = "0.1.0"
+description = "Backend for เงินทอน (Ngern Thon) personal-finance app"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlmodel>=0.0.22",
+    "alembic>=1.14",
+    "pydantic-settings>=2.6",
+    "passlib[bcrypt]>=1.7",
+    "pyjwt>=2.10",
+    "python-multipart>=0.0.12",
+    "apscheduler>=3.10",
+    "google-auth>=2.36",
+    "psycopg[binary]>=3.2",
+    "httpx>=0.28",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

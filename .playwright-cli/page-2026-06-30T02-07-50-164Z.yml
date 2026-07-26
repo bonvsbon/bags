@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-006
+      - heading "Goal contributions accept zero and negative amounts" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Validation / Goals"
+    - generic [ref=e8]: High
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected 422. Actual API returned 200 OK.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "_____________ test_goal_contribution_rejects_non_positive_amounts _____________ client = <starlette.testclient.TestClient object at 0x0000020C72D59370> def test_goal_contribution_rejects_non_positive_amounts(client): headers = _register(client, \"goal-amount\") _asset_account(client, headers, balance=1000) goal = client.post( f\"{API}/goals\", headers=headers, json={\"name\": \"trip\", \"target_amount\": 10000, \"saved_amount\": 1000}, ).json() for amount in (0, -100): res = client.post( f\"{API}/goals/{goal['id']}/contribute\", headers=headers, json={\"amount\": amount}, ) > assert res.status_code == 422 E assert 200 == 422 E + where 200 = <Response [200 OK]>.status_code tests\\test_security_defects.py:125: AssertionError"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

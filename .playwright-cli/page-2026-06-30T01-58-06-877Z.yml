@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-002
+      - heading "Transaction patch accepts another user account" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Security / Ledger"
+    - generic [ref=e8]: Critical
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected reject 400/404/422. Actual API returned 200 OK.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "��============================= test session starts ============================= platform win32 -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 rootdir: D:\\github\\future\\Bags\\backend configfile: pyproject.toml testpaths: tests plugins: anyio-4.14.0 collected 53 items tests\\test_aggregation_unit.py ............ [ 22%] tests\\test_auth.py ..... [ 32%] tests\\test_crud.py ........ [ 47%] tests\\test_insights.py .. [ 50%] tests\\test_jobs.py .... [ 58%] tests\\test_ledger.py ........ [ 73%] tests\\test_money.py ... [ 79%] tests\\test_security_defects.py FFFFFF [ 90%] tests\\test_summary.py ..... [100%] ================================== FAILURES =================================== _ test_transac"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.

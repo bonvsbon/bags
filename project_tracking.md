@@ -2,7 +2,7 @@
 
 > เอกสารนี้เป็นทั้ง **แผนออกแบบ backend** และ **ตัวติดตามงาน** (มี checkbox ต่อ phase)
 > Frontend = React + Vite (อยู่ที่ `src/`) ทำเสร็จแล้ว — backend จะต้อง “ป้อนข้อมูลจริง” ให้ทุกหน้าจอที่มีอยู่
-> สถานะ: 🟡 *Planning* — ยังไม่เริ่มเขียนโค้ด
+> สถานะ: 🟢 *Building* — Phase 0–8 เสร็จ (รวมแอปจริงเชื่อม API + verified ใน browser); เหลือ Phase 9 AI (รอผู้ใช้) + deploy จริง (รอ provider). 47 pytest + 23 vitest + 7 smoke ผ่าน
 >
 > **อัปเดตดีไซน์ (2026-06-23):** แอปเปลี่ยนชื่อ **เงินเหลือ → เงินทอน**; เพิ่ม **6 ธีม** (light/mint/sky/sand/dark/midnight) แทน dark on/off, หน้า **รายละเอียด "เงินที่ใช้ได้จริง"**, ฟอร์ม **สร้างเป้าหมาย / สร้าง-แก้ไขบิล**, **ลบ/แก้ไข** bill & goal, onboarding แก้รายได้ได้ + วันสิ้นเดือน (EOM) + ค่าใช้จ่าย custom, และ **Web Dashboard แบบหลายหน้า** (home/รายการ/แผน/บิล/บัญชี/เป้าหมาย/รายงาน/ตั้งค่า). ผลกระทบต่อ data model/endpoint สรุปไว้ใน §3, §4, §10 และ §12 (changelog).
 
@@ -241,44 +241,70 @@ backend/
 
 ## 9. Roadmap & Tracking (เช็กลิสต์)
 
-### Phase 0 — Setup  🟡
-- [ ] โครง `backend/`, `pyproject.toml`, FastAPI skeleton, `/health`
-- [ ] เชื่อม Neon (online Postgres) ผ่าน `DATABASE_URL` (SSL), ทดสอบ connect
-- [ ] Alembic init + baseline migration
-- [ ] `config.py` (.env), CORS สำหรับ Vite, `.env.example`
+### Phase 0 — Setup  ✅ (2026-06-24)
+- [x] โครง `backend/`, `pyproject.toml`, FastAPI skeleton, `/health` — boot จริง + `/docs` 200
+- [x] DB layer: เริ่ม **SQLite local** (`sqlite:///./ngernthon.db`), `db.py` สลับเป็น Neon ได้ผ่าน `DATABASE_URL` (ไม่แตะโค้ด) — *Neon connect เลื่อนไปทำตอน deploy*
+- [x] Alembic wired (`alembic/env.py` อ่าน `DATABASE_URL` จาก `app.config`, target = `SQLModel.metadata`, `render_as_batch` สำหรับ SQLite) — *baseline migration generate ตอน Phase 2 ที่มี models*
+- [x] `config.py` (pydantic-settings + `.env`), CORS สำหรับ Vite, `.env.example`, `README.md`
 
-### Phase 1 — Auth
-- [ ] models: `users`, `auth_identities`, `refresh_tokens` · security: hash + JWT
-- [ ] `POST /auth/register|login|refresh|logout`, `POST /auth/google`, `POST /auth/guest`, `POST /auth/guest/upgrade`, `GET /auth/me`
-- [ ] dependency `get_current_user`
+### Phase 1 — Auth  ✅ (2026-06-24)
+- [x] models: `users`, `auth_identities`, `refresh_tokens` (`app/models/user.py`) + Alembic migration `auth tables`
+- [x] security: bcrypt (direct) hash + PyJWT access token + opaque refresh (sha256-hashed, rotation)
+- [x] `POST /auth/register|login|refresh|logout`, `POST /auth/google`, `POST /auth/guest`, `POST /auth/guest/upgrade`, `GET /auth/me` (prefix `/api/v1`)
+- [x] dependency `get_current_user` (`app/deps.py`, Bearer)
+- [x] tests: `tests/test_auth.py` — 5 passed (register/login/me, refresh rotation+revoke, guest→upgrade keeps `user_id`, auth required, google-not-configured 503)
 
-### Phase 2 — Core models + migrations
-- [ ] models §3 ทั้งหมด + relations · Alembic migrate ขึ้น Neon
-- [ ] `seed.py`: default categories + demo user “บอล” (reconcile ตามสูตร §5)
+### Phase 2 — Core models + migrations  ✅ (2026-06-24)
+- [x] models §3: `profiles` `settings` `accounts` `categories` `transactions` `bills` `bill_payments` `budgets` `goals` `insights` `notifications` (money = int satang) · Alembic migration `core models` (applied to SQLite) — *Neon ตอน deploy* · `ai_*` เลื่อนไป Phase 9
+- [x] `seed.py`: default categories + demo user “บอล” — **reconciled** assets 50,000 − reserved 37,200 (bills 32,200 + goal 5,000) = available 12,800 (มี assert + idempotent reset)
 
-### Phase 3 — CRUD + Onboarding
-- [ ] routers: accounts, categories, transactions, bills, budgets, goals
-- [ ] `POST /onboarding`, `GET·PATCH /profile|/settings`
-- [ ] filters/pagination ของ `/transactions`, `POST /bills/{id}/pay`, `POST /goals/{id}/contribute`
+### Phase 3 — CRUD + Onboarding  ✅ (2026-06-24)
+- [x] routers: accounts, categories, transactions, bills, budgets, goals (ทุก endpoint กรองด้วย `user_id`, owner-check 404)
+- [x] `POST /onboarding` (upsert profile + สร้าง bills จาก recurring), `GET·PATCH /profile|/settings` (get-or-create)
+- [x] filters/pagination + `group_by=day` ของ `/transactions`, `POST /bills/{id}/pay` (idempotent ต่อรอบเดือน 409), `POST /goals/{id}/contribute`, budgets upsert ต่อ (category, period)
+- [x] money boundary: API = บาท, DB = satang (`app/money.py`)
+- [x] tests: `tests/test_crud.py` — 8 ผ่าน (profile/settings, accounts CRUD, txn filter+group, bill pay idempotent, goal contribute, budget upsert, onboarding, **tenant isolation**)
 
-### Phase 4 — Aggregation
-- [ ] `services/aggregation.py` (สูตร §5) + unit tests กับเลข demo
-- [ ] `GET /summary/home | /summary/plan | /summary/dashboard`
+### Phase 4 — Aggregation  ✅ (2026-06-24)
+- [x] `services/aggregation.py` (สูตร §5): `total_balance`, `reserved` (บิลค้าง+goal), `available`, `next_payday`/`days_until_payday` (รองรับ EOM), `month_in/out`, `budget_usage` (used/limit/over≥0.8), `weekly_bars` (4 สัปดาห์), `spend_by_category`
+- [x] `GET /summary/home | /detail | /plan | /dashboard | /reports`
+- [x] tests: `tests/test_summary.py` — 5 ผ่าน; ตรวจ reconcile (available 12,800 = 50,000 − 37,200), month in/out, watch budget over, weekly bars, by-category + smoke ทุก endpoint
+- [x] verify seed จริง "บอล": available ฿12,800 · reserved ฿37,200 · month_out ฿41,800 ตรง design
 
-### Phase 5 — Insights engine
-- [ ] `services/insights.py` (rules §5) · `GET /insights`, mark read
+### Phase 5 — Insights engine  ✅ (2026-06-24)
+- [x] `services/insights.py` (rules §5: category_over, month_compare, budget_near, pace, bill_due) · `refresh_insights` dedupe ต่อ (type, period, title) · `GET /insights` (+auto refresh) · `POST /insights/{id}/read`
+- [x] tests: `tests/test_insights.py` — 2 ผ่าน (budget/bill rules + dedupe + mark read)
 
-### Phase 6 — Jobs
-- [ ] `notifications` model · APScheduler (§6) · 4 jobs
+### Phase 6 — Jobs  ✅ (2026-06-24)
+- [x] APScheduler (`jobs/scheduler.py`, opt-in `ENABLE_SCHEDULER`) + lifespan wiring · 4 jobs (§6): bill reminders, budget alerts, weekly summary, month rollover (clone budgets)
+- [x] `jobs/tasks.py` แยก body ให้ unit-test ได้ · เคารพ toggle `notify_bills/notify_budget/weekly_summary` · notification dedupe ต่อวัน
+- [x] tests: `tests/test_jobs.py` — 4 ผ่าน (bill dedupe, budget alert, rollover clone, respect toggle)
 
-### Phase 7 — Frontend integration
-- [ ] API client ใน `src/` (fetch + token store) แทน seed ใน `store.js`
-- [ ] หน้า Login/Register · ปุ่ม “เข้าสู่ระบบด้วย Google” · ปุ่ม “ลองใช้แบบ Guest” · ผูก Add/Bills/Goals/Settings เข้ากับ API
-- [ ] map `/summary/*` เข้าหน้า Home/Plan/Dashboard
+### Phase 7 — Frontend integration  ✅ (2026-06-24) — โหมดแอปจริงแยก (ตัวเลือก ก)
+- [x] **API client** `src/api/client.js` ครบทุก endpoint + token store (localStorage) + auto-refresh on 401 + auth/guest/google/logout
+- [x] **Contract verified**: `backend/scripts/smoke.mjs` — 7/7 PASS (register → onboarding → summary, reconcile 12,800, refresh rotation+revoke)
+- [x] **โหมดแอปจริงแยก** (ปุ่ม “เปิดแอปจริง” บน top bar; showcase เดิมไม่แตะ): `src/live/` — `AuthScreen` (login/register/guest), `LiveApp` shell (phone frame + bottom nav + toast + 6 ธีม), live screens: Home/Detail/Add/Bills/Goals/Settings ดึง `/summary/*` + CRUD จริง
+- [x] **Verified ใน browser** (backend+vite จริง): login demo → Home แสดง ฿12,800 / ฿2,133 ต่อวัน / เข้า 45,000 / ออก 41,800; Detail breakdown; จ่ายบิลจริง 6→5 + persist; ไม่มี console error
+- [x] **Settings ตรง showcase** (2026-06-24): 5 sections (บัญชี/แจ้งเตือน/ธีม/ความปลอดภัย/ทั่วไป), toggle 5 ตัว wired `patchSettings` (persist จริง), swatch 6 สี, profile rows (ชื่อ/วันเงินเดือน/เป้าหมาย) wired `patchProfile`, version footer — verified toggle persist + theme swatch
+- [x] **CRUD ครบในแอปจริง**: Bills เพิ่ม/จ่าย/ลบ · Goals เพิ่ม/เก็บเงิน/ลบ · ทุกปุ่มคลิกได้
+- [x] **หน้าจอครบเท่า showcase** (2026-06-24): เพิ่ม Plan, Transactions (filter+group), Accounts, More (hub), **ฟอร์ม CreateBill/CreateGoal เต็ม** (icon picker/รอบ/วันครบ/เตือน/ETA แทน prompt), **Add แบบ keypad + success state** · nav รื้อเป็นแบบ showcase (หน้าแรก/รายการ/+/แผนเงิน/เพิ่มเติม) + nav stack (back/drill-in) + ซ่อน nav ตอนกรอกฟอร์ม
+- [x] **verified ใน browser**: ทุกหน้า render + create บิล/เป้าหมายจริง end-to-end + Add keypad→success + ไม่มี console error
+- [x] **ครบ 4 รายการ optional** (2026-06-24, verified ใน browser):
+  - **แก้ไขบิล/เป้าหมาย** — ฟอร์ม CreateBill/CreateGoal รับ `editing` (prefill + PATCH) + ปุ่ม ✎/แก้ไข ในแต่ละการ์ด
+  - **Bottom Sheet สรุปเดือน** — `LiveSheet` (used/available/tip จาก /summary/home) เปิดจากปุ่ม "✦ ดูสรุป" บน Home
+  - **Onboarding flow** — `LiveOnboarding` 4 ขั้น (วันเงินเดือน→รายได้+presets→ค่าใช้จ่ายประจำ multi-select→เป้าหมาย) แสดงอัตโนมัติเมื่อ user ใหม่ (income=0) → POST /onboarding (verified: guest→ครบ 4 ขั้น→เซฟ income/pay_day/goal + 2 บิล)
+  - **Web Dashboard live** — `LiveWebDashboard` (sidebar + 7 views: ภาพรวม/รายการ/แผนเงิน/บิล/บัญชี/เป้าหมาย/รายงาน) ดึง /summary/dashboard,/reports,/plan + lists จริง · เข้าจากปุ่ม "💻 เปิดแบบเว็บ" · ปุ่มกลับมือถือ
+- [ ] *(เหลือจริง ๆ ถ้าอยากได้)* แก้ไขรายการ transaction, แก้ไขบัญชี, Web Dashboard ปุ่ม CRUD
 
-### Phase 8 — QA & Deploy
-- [ ] pytest (services + endpoints) · ตรวจ OpenAPI `/docs`
-- [ ] Dockerfile · deploy (Railway/Render/Fly) · env prod · run migration
+### Phase 8 — QA & Deploy  ✅ (artifacts เสร็จ; cloud deploy รอ provider)
+- [x] **pytest 47 ผ่าน** (auth/crud/summary/insights/jobs + **ledger** + **aggregation unit** + **money**) · OpenAPI สะอาด · `/docs` 200
+- [x] **vitest 23 ผ่าน** (frontend): `css` parser, `baht` formatter, **api client** (token/refresh/204/error), components (AuthScreen, LiveAdd keypad, CreateGoal ETA, Onboarding 4-step flow) → `npm test`
+- [x] **Correctness fixes (audit 2026-06-24)** — `app/services/ledger.py`:
+  - 🐛 **จ่ายบิลแล้ว available เด้งขึ้น** (แค่ mark paid ไม่หักเงิน) → pay_bill หักยอดบัญชี asset + สร้าง expense txn + ผูก `transaction_id` → available คงที่ (verified live: จ่าย 12,000 → available 12,800 ไม่เปลี่ยน, bank 38k→26k)
+  - 🐛 **ธุรกรรมไม่กระทบยอดบัญชี** → create/patch/delete transaction ปรับ balance บัญชี (expense −, income +, patch reverse+apply, delete reverse)
+  - 🐛 **daily_allowance ติดลบ** เมื่อใช้เกิน → clamp `max(available,0)`
+- [x] `Dockerfile` (alembic upgrade → uvicorn), `.dockerignore`, `render.yaml` blueprint, `psycopg[binary]` สำหรับ Postgres prod, README deploy section
+- [ ] *(รอ)* รัน deploy จริงบน provider ที่เลือก + ตั้ง `DATABASE_URL`/`JWT_SECRET`/`CORS_ORIGINS` prod (ต้องการ Neon URL + provider จากผู้ใช้)
 
 ### Phase 9 — AI Q/A & Financial Planning
 - [ ] `ai_conversations`, `ai_messages` models + migrations
@@ -315,12 +341,17 @@ backend/
 
 ---
 
-## 11. Open Questions (ต้องยืนยันก่อน/ระหว่าง Phase 2)
+## 11. Open Questions
 
-1. **นิยาม `reserved` (“ต้องกันไว้”)** = บิลค้างจ่าย + goal contribution เท่านั้น หรือรวม “งบที่เหลือของเดือน” ด้วย? → กระทบเลข `available`
-2. **Online DB เจ้าไหน** — เริ่มที่ **Neon** (default ที่เสนอ) หรืออยากใช้ Supabase/Railway? ต้องการ provision ให้ หรือมี `DATABASE_URL` อยู่แล้ว?
+**ตัดสินแล้ว (2026-06-24):**
+1. ✅ **`reserved`** = บิลค้างจ่าย + goal contribution (ไม่รวมงบที่เหลือของเดือน) → `available = total_balance − reserved`
+2. ✅ **DB** = เริ่ม **SQLite local** ก่อน, ย้าย Neon ตอน deploy (โค้ดสลับได้ผ่าน `DATABASE_URL`)
+4. ✅ **Seed** = ทำเลข demo ให้ reconcile ตรงตามสูตร §5 (เลิกใช้เลข demo ที่ขัดกัน)
+
+**ยังต้องยืนยัน (ก่อนถึง phase ที่เกี่ยวข้อง):**
 3. **ผูกธนาคารจริง/นำเข้า statement** — รอบนี้ไม่รวม (อยู่ใน “Full platform”) ยืนยันว่าข้าม
-4. **Reconcile demo data** — ให้ทำ seed ให้เลขตรงตามสูตร (เลิกใช้เลข demo ที่ขัดกัน) ใช่ไหม
+5. **Deploy target** — provider ไหน (Render/Railway/Fly) + มี Neon `DATABASE_URL` แล้วหรือให้ provision
+9. **ทิศทาง rewire UI (Phase 7)** — frontend ปัจจุบันเป็น **showcase** (เลข hardcode). จะเอาแบบไหน: (ก) ทำ **โหมดแอปจริง** แยก (login → ดึง API) คู่กับ showcase เดิม, (ข) แทนที่ showcase ทั้งหมดให้เป็นแอปจริง, หรือ (ค) ค่อย ๆ ต่อทีละหน้า (Home/Plan ก่อน) — กระทบโครงมาก จึงถามก่อนลงมือ
 5. **Deploy target** ของ backend (Railway/Render/Fly) — มี preference ไหม
 6. **Guest lifecycle** — guest data จะหมดอายุไหม (เช่น 30/90 วัน) หรือเก็บถาวรจนกว่าผู้ใช้ลบ?
 7. **Google account linking** — ถ้า guest กด upgrade ด้วย Gmail ที่มี account อยู่แล้ว ให้ merge ข้อมูล guest เข้าบัญชีเดิม หรือให้ผู้ใช้เลือกก่อน?
@@ -344,4 +375,4 @@ backend/
 
 ---
 
-*อัปเดตล่าสุด: 2026-06-23 · สถานะ: Planning (backend) — frontend อัปเดตตามดีไซน์ใหม่แล้ว, รออนุมัติเพื่อเริ่ม Phase 0*
+*อัปเดตล่าสุด: 2026-06-29 · สถานะ: 🟢 Building — Phase 0–8 เสร็จ (แอปจริงเชื่อม API + verified ใน browser); เหลือ Phase 9 AI (รอผู้ใช้) + deploy จริง (รอ provider). 47 pytest + 23 vitest + 7 smoke ผ่าน*

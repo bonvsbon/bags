@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: NL-SIT-004
+      - heading "Budget create accepts another user private category" [level=1] [ref=e6]
+      - generic [ref=e7]: "SIT run: sit-20260630-0845 ? Area: Backend / Security / Budgets"
+    - generic [ref=e8]: High
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Summary
+        - generic [ref=e13]: Expected reject foreign private category. Actual API returned 201 Created.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Evidence Source
+        - generic [ref=e16]: test-results/sit-20260630-0845
+    - generic [ref=e17]: Captured Failure Output
+    - generic [ref=e18]: "______________ test_budget_create_rejects_foreign_user_category _______________ client = <starlette.testclient.TestClient object at 0x0000020C72E12140> def test_budget_create_rejects_foreign_user_category(client): owner_h = _register(client, \"cat-owner\") attacker_h = _register(client, \"cat-attacker\") foreign_category = client.post( f\"{API}/categories\", headers=owner_h, json={\"name\": \"private food\", \"kind\": \"expense\"}, ).json() res = client.post( f\"{API}/budgets\", headers=attacker_h, json={\"category_id\": foreign_category[\"id\"], \"limit_amount\": 3000, \"period\": \"2026-06\"}, ) > assert res.status_code in (400, 404, 422) E assert 201 in (400, 404, 422) E + where 201 = <Response [201 Created]>.status_code tests\\test_security_defects.py:92: AssertionError"
+  - generic [ref=e19]: Generated screenshot evidence for defect explanation.
