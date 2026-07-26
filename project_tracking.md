@@ -2,7 +2,7 @@
 
 > เอกสารนี้เป็นทั้ง **แผนออกแบบ backend** และ **ตัวติดตามงาน** (มี checkbox ต่อ phase)
 > Frontend = React + Vite (อยู่ที่ `src/`) ทำเสร็จแล้ว — backend จะต้อง “ป้อนข้อมูลจริง” ให้ทุกหน้าจอที่มีอยู่
-> สถานะ: 🟢 *Building* — Phase 0–8 เสร็จ (รวมแอปจริงเชื่อม API + verified ใน browser); เหลือ Phase 9 AI (รอผู้ใช้) + deploy จริง (รอ provider). 47 pytest + 23 vitest + 7 smoke ผ่าน
+> สถานะ: 🟢 *Building* — Phase 0–8 เสร็จ (รวมแอปจริงเชื่อม API + verified ใน browser); Phase 9.1–9.3 เสร็จแล้ว (AI snapshot/router/Gemini/chat + consent/history; รอ `GEMINI_API_KEY` เพื่อ verify provider จริง); เหลือ Phase 9.4–9.6 + deploy จริง. 68 pytest + 23 vitest + 7 smoke ผ่าน
 >
 > **อัปเดตดีไซน์ (2026-06-23):** แอปเปลี่ยนชื่อ **เงินเหลือ → เงินทอน**; เพิ่ม **6 ธีม** (light/mint/sky/sand/dark/midnight) แทน dark on/off, หน้า **รายละเอียด "เงินที่ใช้ได้จริง"**, ฟอร์ม **สร้างเป้าหมาย / สร้าง-แก้ไขบิล**, **ลบ/แก้ไข** bill & goal, onboarding แก้รายได้ได้ + วันสิ้นเดือน (EOM) + ค่าใช้จ่าย custom, และ **Web Dashboard แบบหลายหน้า** (home/รายการ/แผน/บิล/บัญชี/เป้าหมาย/รายงาน/ตั้งค่า). ผลกระทบต่อ data model/endpoint สรุปไว้ใน §3, §4, §10 และ §12 (changelog).
 
@@ -33,7 +33,8 @@
 React (Vite)  ──HTTPS/JSON──▶  FastAPI (Uvicorn/Gunicorn)
   src/store.js                   │
   (เปลี่ยนจาก seed ในเครื่อง       ├── Routers (auth, txn, bill, budget, ...)
-   ไปเรียก API client)            ├── Services (aggregation, insights, bills)
+   ไปเรียก API client)            ├── Services (aggregation, insights, ledger, AI context)
+                                  ├── AI Router (provider pool + failover)
                                   ├── APScheduler (cron jobs)
                                   └── SQLModel/SQLAlchemy
                                           │
@@ -153,8 +154,9 @@ React (Vite)  ──HTTPS/JSON──▶  FastAPI (Uvicorn/Gunicorn)
 
 **AI Q/A & Financial Planning (Phase 9)**
 - `POST /ai/chat` → ถามข้อมูลการเงิน/ให้ AI ช่วยวิเคราะห์จากข้อมูลของผู้ใช้ เช่น "เดือนนี้ควรลดอะไร" หรือ "เงินเหลือพอถึงวันเงินเดือนไหม"
-- `POST /ai/plan` → ให้ AI ช่วยร่างแผนการเงินเบื้องต้นจาก summary, budgets, bills, goals
+- `POST /ai/consent` → บันทึกความยินยอมก่อนส่ง snapshot การเงินไป cloud AI provider
 - `GET /ai/conversations` · `GET /ai/conversations/{id}` · `DELETE /ai/conversations/{id}` → ประวัติถาม-ตอบ
+- *(ถัดไป)* `POST /ai/plan` → ให้ AI ช่วยร่างแผนการเงินเบื้องต้นจาก summary, budgets, bills, goals
 
 **Misc** — `GET /health` · `GET /docs` (OpenAPI auto)
 
@@ -212,29 +214,47 @@ React (Vite)  ──HTTPS/JSON──▶  FastAPI (Uvicorn/Gunicorn)
 
 ---
 
-## 8. Project Structure (เป้าหมาย)
+## 8. Project Structure (ปัจจุบัน)
 
 ```
-backend/
-  app/
-    main.py            FastAPI app, CORS, include routers, start scheduler
-    config.py          pydantic-settings (env)
-    db.py              engine + session (online Postgres, SSL)
-    deps.py            get_db, get_current_user
-    security.py        hash + JWT
-    models/            SQLModel tables (§3)
-    schemas/           Pydantic request/response (บาท ↔ satang)
-    routers/           auth, profile, settings, accounts, categories,
-                       transactions, bills, budgets, goals, summary, insights,
-                       ai
-    services/          aggregation.py, insights.py, bills.py, ai_context.py
-    jobs/              scheduler.py, tasks.py
-    seed.py            default categories + demo data (reconcile ตามสูตร)
-  alembic/             migrations
-  tests/               pytest (services + endpoints)
-  pyproject.toml       deps (uv/pip)
-  .env.example
-  Dockerfile
+Bags/
+  src/                         React + Vite frontend
+    App.jsx                    showcase/live app switcher
+    api/client.js              API client + token store + auto-refresh + AI client
+    components/                shared UI: BottomNav, Sheet, Toast, Chat, MobileStage
+    lib/                       platform/css helpers
+    screens/ tabs/ store.js    showcase/prototype screens + state model
+    live/                      API-backed live app: AuthScreen, LiveApp, screens,
+                               morescreens, webdashboard, LiveChat
+  backend/
+    app/
+      main.py                  FastAPI app, CORS, router wiring, optional scheduler
+      config.py                pydantic-settings: DB/auth/CORS/AI provider config
+      db.py deps.py security.py  DB session, current user, password/JWT helpers
+      ai/                      AiProvider protocol, router/failover, factory,
+                               providers/gemini.py
+      models/                  user, profile, finance, insight, ai
+      schemas/                 Pydantic request/response (บาท ↔ satang)
+      routers/                 auth/profile/onboarding/accounts/categories/
+                               transactions/bills/budgets/goals/summary/
+                               insights/ai
+      services/                aggregation, ledger, ownership, insights,
+                               ai_context, prompts
+      jobs/                    scheduler.py, tasks.py
+      seed.py                  default categories + demo data (reconcile ตามสูตร)
+    alembic/                   migrations
+    scripts/smoke.mjs          API smoke flow
+    tests/                     pytest (68 tests: services + endpoints + AI)
+    pyproject.toml             backend deps
+    Dockerfile render.yaml     deploy artifacts
+  android/                     Capacitor Android project
+  assets/ public/              icon/splash/PWA assets
+  test/                        vitest setup/tests (23 tests)
+  defects/                     SIT defect tickets
+  test-results/                test logs, JUnit, screenshots, SIT evidence
+  PHASE9_AI.md                 detailed AI plan/status
+  project_tracking.md          this roadmap/tracker
+  design-src/                  original design import/reference
 ```
 
 ---
@@ -255,7 +275,7 @@ backend/
 - [x] tests: `tests/test_auth.py` — 5 passed (register/login/me, refresh rotation+revoke, guest→upgrade keeps `user_id`, auth required, google-not-configured 503)
 
 ### Phase 2 — Core models + migrations  ✅ (2026-06-24)
-- [x] models §3: `profiles` `settings` `accounts` `categories` `transactions` `bills` `bill_payments` `budgets` `goals` `insights` `notifications` (money = int satang) · Alembic migration `core models` (applied to SQLite) — *Neon ตอน deploy* · `ai_*` เลื่อนไป Phase 9
+- [x] models §3: `profiles` `settings` `accounts` `categories` `transactions` `bills` `bill_payments` `budgets` `goals` `insights` `notifications` (money = int satang) · Alembic migration `core models` (applied to SQLite) — *Neon ตอน deploy* · `ai_conversations`/`ai_messages` เพิ่มใน Phase 9
 - [x] `seed.py`: default categories + demo user “บอล” — **reconciled** assets 50,000 − reserved 37,200 (bills 32,200 + goal 5,000) = available 12,800 (มี assert + idempotent reset)
 
 ### Phase 3 — CRUD + Onboarding  ✅ (2026-06-24)
@@ -297,7 +317,7 @@ backend/
 - [ ] *(เหลือจริง ๆ ถ้าอยากได้)* แก้ไขรายการ transaction, แก้ไขบัญชี, Web Dashboard ปุ่ม CRUD
 
 ### Phase 8 — QA & Deploy  ✅ (artifacts เสร็จ; cloud deploy รอ provider)
-- [x] **pytest 47 ผ่าน** (auth/crud/summary/insights/jobs + **ledger** + **aggregation unit** + **money**) · OpenAPI สะอาด · `/docs` 200
+- [x] **pytest 68 ผ่าน** (auth/crud/summary/insights/jobs + **ledger** + **aggregation unit** + **money** + security regression + AI context/router/chat) · OpenAPI สะอาด · `/docs` 200
 - [x] **vitest 23 ผ่าน** (frontend): `css` parser, `baht` formatter, **api client** (token/refresh/204/error), components (AuthScreen, LiveAdd keypad, CreateGoal ETA, Onboarding 4-step flow) → `npm test`
 - [x] **Correctness fixes (audit 2026-06-24)** — `app/services/ledger.py`:
   - 🐛 **จ่ายบิลแล้ว available เด้งขึ้น** (แค่ mark paid ไม่หักเงิน) → pay_bill หักยอดบัญชี asset + สร้าง expense txn + ผูก `transaction_id` → available คงที่ (verified live: จ่าย 12,000 → available 12,800 ไม่เปลี่ยน, bank 38k→26k)
@@ -306,13 +326,18 @@ backend/
 - [x] `Dockerfile` (alembic upgrade → uvicorn), `.dockerignore`, `render.yaml` blueprint, `psycopg[binary]` สำหรับ Postgres prod, README deploy section
 - [ ] *(รอ)* รัน deploy จริงบน provider ที่เลือก + ตั้ง `DATABASE_URL`/`JWT_SECRET`/`CORS_ORIGINS` prod (ต้องการ Neon URL + provider จากผู้ใช้)
 
-### Phase 9 — AI Q/A & Financial Planning
-- [ ] `ai_conversations`, `ai_messages` models + migrations
-- [ ] `services/ai_context.py`: สรุปข้อมูลผู้ใช้แบบปลอดภัยจาก `/summary/*`, transactions, bills, budgets, goals
-- [ ] `POST /ai/chat`, `POST /ai/plan`, `GET/DELETE /ai/conversations`
-- [ ] Prompt/policy: ตอบเป็นภาษาไทย, อธิบายจากข้อมูลจริง, ถามกลับเมื่อข้อมูลไม่พอ, ไม่ฟันธงเรื่องลงทุน/กฎหมาย/ภาษี
-- [ ] Frontend: หน้าหรือ sheet “ถาม AI” สำหรับถามข้อมูลและขอแผนการเงินเบื้องต้น
-- [ ] Tests: unit tests สำหรับ context builder + integration tests ว่า AI เห็นเฉพาะข้อมูลของ user ตัวเอง
+### Phase 9 — AI Q/A & Financial Planning  🚧 (9.1–9.3 เสร็จ; 9.4–9.6 ยังเหลือ)
+- [x] `ai_conversations`, `ai_messages` models + migration `ai_tables_user_tier_consent`
+- [x] `services/ai_context.py`: สรุปข้อมูลผู้ใช้แบบปลอดภัยจาก `/summary/*`, transactions, bills, budgets, goals โดยให้ aggregation เป็น source of truth
+- [x] `backend/app/ai/base.py`, `router.py`, `factory.py`: provider abstraction + cooldown/failover + tier-aware pool guard
+- [x] `backend/app/ai/providers/gemini.py`: Gemini adapter ตัวแรก (รอ `GEMINI_API_KEY` เพื่อ verify คุยจริง)
+- [x] `POST /ai/consent`, `POST /ai/chat`, `GET/DELETE /ai/conversations`
+- [x] Prompt/policy: ตอบเป็นภาษาไทย, อธิบายจากข้อมูลจริง, ถามกลับเมื่อข้อมูลไม่พอ, ไม่ฟันธงเรื่องลงทุน/กฎหมาย/ภาษี
+- [x] Frontend: `Chat.jsx` / `LiveChat.jsx` + client methods `api.ai.*`
+- [x] Tests: context builder, router/failover, chat/consent/history/isolation
+- [ ] 9.4 provider สำรอง: Groq/OpenRouter/Cerebras adapters เพื่อ failover ฟรีหลายเจ้า
+- [ ] 9.5 `/ai/plan`, summary narration, natural-language transaction draft
+- [ ] 9.6 daily free limit, `/ai/status`, paid provider path หลัง `AI_ALLOW_PAID`
 
 ---
 
@@ -336,7 +361,7 @@ backend/
 | Web Dashboard (home) | `GET /summary/dashboard` |
 | Web · รายงาน | `GET /summary/reports` |
 | Web · บัญชี/บิล/เป้าหมาย/แผน/รายการ | reuse `GET /accounts` · `/bills` · `/goals` · `/summary/plan` · `/transactions` |
-| AI Q/A | `POST /ai/chat` · `POST /ai/plan` · `GET /ai/conversations` |
+| AI Q/A | `POST /ai/consent` · `POST /ai/chat` · `GET/DELETE /ai/conversations` (`/ai/plan` = next) |
 | Design System | (static, ไม่ใช้ API) |
 
 ---
@@ -347,15 +372,14 @@ backend/
 1. ✅ **`reserved`** = บิลค้างจ่าย + goal contribution (ไม่รวมงบที่เหลือของเดือน) → `available = total_balance − reserved`
 2. ✅ **DB** = เริ่ม **SQLite local** ก่อน, ย้าย Neon ตอน deploy (โค้ดสลับได้ผ่าน `DATABASE_URL`)
 4. ✅ **Seed** = ทำเลข demo ให้ reconcile ตรงตามสูตร §5 (เลิกใช้เลข demo ที่ขัดกัน)
+9. ✅ **ทิศทาง rewire UI** = ทำ **โหมดแอปจริง** แยกจาก showcase เดิม (`src/live/`) และเชื่อม API จริงครบหน้าหลัก
 
 **ยังต้องยืนยัน (ก่อนถึง phase ที่เกี่ยวข้อง):**
 3. **ผูกธนาคารจริง/นำเข้า statement** — รอบนี้ไม่รวม (อยู่ใน “Full platform”) ยืนยันว่าข้าม
 5. **Deploy target** — provider ไหน (Render/Railway/Fly) + มี Neon `DATABASE_URL` แล้วหรือให้ provision
-9. **ทิศทาง rewire UI (Phase 7)** — frontend ปัจจุบันเป็น **showcase** (เลข hardcode). จะเอาแบบไหน: (ก) ทำ **โหมดแอปจริง** แยก (login → ดึง API) คู่กับ showcase เดิม, (ข) แทนที่ showcase ทั้งหมดให้เป็นแอปจริง, หรือ (ค) ค่อย ๆ ต่อทีละหน้า (Home/Plan ก่อน) — กระทบโครงมาก จึงถามก่อนลงมือ
-5. **Deploy target** ของ backend (Railway/Render/Fly) — มี preference ไหม
 6. **Guest lifecycle** — guest data จะหมดอายุไหม (เช่น 30/90 วัน) หรือเก็บถาวรจนกว่าผู้ใช้ลบ?
 7. **Google account linking** — ถ้า guest กด upgrade ด้วย Gmail ที่มี account อยู่แล้ว ให้ merge ข้อมูล guest เข้าบัญชีเดิม หรือให้ผู้ใช้เลือกก่อน?
-8. **AI provider/model** — ใช้ provider ไหน, เก็บ conversation นานแค่ไหน, และต้องการให้ AI อ่านข้อมูลระดับ transaction detail หรือเฉพาะ summary?
+8. **AI provider/model ถัดไป** — หลัง Gemini จะเพิ่ม Groq/OpenRouter/Cerebras ตัวไหนก่อน, เก็บ conversation นานแค่ไหน, และให้ AI อ่าน transaction detail ระดับใด?
 
 ---
 
@@ -375,4 +399,4 @@ backend/
 
 ---
 
-*อัปเดตล่าสุด: 2026-06-29 · สถานะ: 🟢 Building — Phase 0–8 เสร็จ (แอปจริงเชื่อม API + verified ใน browser); เหลือ Phase 9 AI (รอผู้ใช้) + deploy จริง (รอ provider). 47 pytest + 23 vitest + 7 smoke ผ่าน*
+*อัปเดตล่าสุด: 2026-07-26 · สถานะ: 🟢 Building — Phase 0–8 เสร็จ; Phase 9.1–9.3 เสร็จ (AI snapshot/router/Gemini/chat + consent/history, รอ `GEMINI_API_KEY` เพื่อ verify provider จริง); เหลือ Phase 9.4–9.6 + deploy จริง. 68 pytest + 23 vitest + 7 smoke ผ่าน*

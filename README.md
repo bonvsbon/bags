@@ -5,7 +5,7 @@
 | ส่วน | เทคโนโลยี | ที่อยู่ | หน้าที่ |
 |---|---|---|---|
 | **Frontend** | React 18 + Vite 6 | `src/` | UI ทั้งหมด (showcase + แอปจริง) |
-| **Backend** | FastAPI + SQLModel + SQLite | `backend/` | API, ฐานข้อมูล, auth, สูตรคำนวณ, jobs |
+| **Backend** | FastAPI + SQLModel + SQLite/Postgres | `backend/` | API, ฐานข้อมูล, auth, สูตรคำนวณ, jobs, AI assistant |
 
 Frontend มี 2 โหมด: **showcase** (โชว์ดีไซน์ เลขตายตัว) และ **แอปจริง** (login → ดึงข้อมูลจริงจาก backend)
 
@@ -83,12 +83,12 @@ npm run dev
 
 ## 4. การรันเทสต์
 
-### Backend (pytest) — 47 เทสต์
+### Backend (pytest) — 68 เทสต์
 ```bash
 cd backend
 .venv\Scripts\pytest                # หรือ .venv\Scripts\python -m pytest -q
 ```
-ครอบคลุม: auth, CRUD, สูตรคำนวณ (aggregation), ledger (ยอดเงิน), insights, jobs, money
+ครอบคลุม: auth, CRUD, สูตรคำนวณ (aggregation), ledger (ยอดเงิน), insights, jobs, money, security regression, AI context/router/chat
 
 ### Frontend (vitest) — 23 เทสต์
 ```bash
@@ -120,20 +120,31 @@ npm test
 Bags/
   src/                         Frontend (React)
     App.jsx                    แถบบน + สลับ showcase/แอปจริง
-    store.js  lib/css.js       state model + ตัวแปลง inline-style
-    components/ screens/ tabs/  showcase (มือถือ/เว็บ/design system)
     api/client.js              ตัวเรียก API (token + auto-refresh)
-    live/                      แอปจริง: LiveApp, screens, morescreens, webdashboard
+    components/                UI shared: BottomNav, Sheet, Toast, Chat, MobileStage
+    lib/                       platform + css helper
+    screens/ tabs/ store.js    showcase/prototype state + mobile/web/design-system views
+    live/                      แอปจริง: AuthScreen, LiveApp, mobile screens, webdashboard, LiveChat
   backend/                     Backend (FastAPI)
     app/
       main.py config.py db.py  แอป + ตั้งค่า + ฐานข้อมูล
-      models/ routers/ schemas/  ตาราง + endpoint + รูปแบบข้อมูล
-      services/                aggregation (สูตร §5), insights, ledger (ยอดเงิน)
+      deps.py security.py      dependency auth/session + hash/JWT
+      ai/                      provider abstraction, router/failover, Gemini adapter
+      models/                  user/profile/finance/insight/ai tables
+      routers/                 auth, CRUD, summary, insights, ai
+      schemas/                 request/response schemas
+      services/                aggregation, insights, ledger, ownership, ai_context, prompts
       jobs/                    APScheduler (เตือนบิล/งบ/สรุป)
       seed.py                  ข้อมูลเดโม "บอล"
     alembic/                   migrations
     tests/                     pytest
+    scripts/smoke.mjs          API smoke test
+  android/                     Capacitor Android project + generated assets
+  assets/ public/              icon/splash/PWA manifest assets
   test/                        vitest (frontend)
+  defects/                     defect tickets จาก SIT/retest
+  test-results/                logs, JUnit, screenshots จาก unit/SIT/retest
+  PHASE9_AI.md                 แผน/สถานะ AI assistant
   project_tracking.md          แผน backend + สถานะงานทุก phase
   design-src/                  ไฟล์ดีไซน์ต้นฉบับ (อ้างอิงเท่านั้น)
 ```
@@ -199,4 +210,4 @@ Bags/
 
 ---
 
-> **สถานะปัจจุบัน:** Phase 0–8 เสร็จ (backend + แอปจริงครบ + 70 เทสต์ผ่าน + ทดสอบผ่านมือถือบน LAN ได้) · เหลือ **Phase 9 (AI)** ที่รอเลือก provider/model — ดูแผนเต็มใน [`project_tracking.md`](project_tracking.md)
+> **สถานะปัจจุบัน:** Phase 0–8 เสร็จ + Phase 9.1–9.3 ของ AI assistant พร้อมโค้ดแล้ว (รอ `GEMINI_API_KEY` เพื่อ verify คุยกับ provider จริง) · Backend 68 pytest + Frontend 23 vitest ผ่าน · ดูแผนเต็มใน [`project_tracking.md`](project_tracking.md)
