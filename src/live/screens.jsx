@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { css } from '../lib/css.js';
 import { api } from '../api/client.js';
+import BankCaptureSettings from '../notifications/BankCaptureSettings.jsx';
 
 // Global "hide amounts" flag. Screens remount on navigation, so reading this
 // module variable inside baht() is enough for the toggle to take effect app-wide
@@ -764,6 +765,9 @@ export function LiveSettings({ theme, setTheme, me, onLogout, toast, back }) {
         <ToggleRow title="เตือนเมื่อใกล้เกินงบ" sub="เมื่อใช้ถึง 80% ของงบ" on={st.notify_budget} onClick={() => toggleS('notify_budget')} border />
         <ToggleRow title="สรุปประจำสัปดาห์" sub="ทุกเช้าวันจันทร์" on={st.weekly_summary} onClick={() => toggleS('weekly_summary')} />
       </div>
+
+      {/* ดักการแจ้งเตือนธนาคาร (เฉพาะแอป Android) */}
+      <BankCaptureSettings toast={toast} />
 
       {/* ธีมแอป */}
       <div style={css(secTitle)}>ธีมแอป</div>

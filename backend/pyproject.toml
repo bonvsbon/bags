@@ -23,6 +23,15 @@ dev = [
     "pytest>=8.3",
 ]
 
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+# มีหลาย top-level dir (app, alembic, tests, scripts) → ต้องบอก setuptools
+# ให้ package จริงคือ app เท่านั้น (ไม่งั้น auto-discovery จะ error)
+[tool.setuptools]
+packages = ["app"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]

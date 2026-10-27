@@ -28,6 +28,19 @@
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Notification Capture (เฟส 0) — service ดัก notification ธนาคาร
+             ต้อง bind กับ permission ของระบบ + ประกาศ intent-filter ให้ OS รู้จัก
+             android:exported="true" จำเป็น เพราะระบบ (นอกแอป) เป็นคน bind เข้ามา -->
+        <service
+            android:name=".notifications.NotiListenerService"
+            android:label="เงินทอน — ดักการแจ้งเตือน"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
     </application>
 
     <!-- Permissions -->
